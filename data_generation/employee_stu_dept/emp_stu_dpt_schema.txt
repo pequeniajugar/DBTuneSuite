@@ -1,0 +1,72 @@
+settings: slide P152
+input size recommandation: 10000, 1000000, 1000000
+
+
+uniformly distributed data：
+employee_stu_dpt_uniform.py
+->
+techdept_uniform_10_{exponent}.csv
+employees_uniform_10_{exponent}.csv
+students_uniform_10_{exponent}.csv
+
+fractally distributed data：
+employee_stu_dpt_fractal.py
+->
+techdept_fractal_10_{exponent}.csv
+employees_fractal_10_{exponent}.csv
+students_fractal_10_{exponent}.csv
+
+
+the uniform and 80/20 fractal distributed column is employee(dpt)
+
+
+table1:
+n = input size
+employee(ssnum,  name,  dept, salary, numfriends);
+	ssnum: int	1...n+1		primary key
+	name: text	Name1...Name{n+1}
+	dept: text	Dept1...Dept{n+1}
+	salary: demical.2	(50000, 60000)
+	numfriends: int	(1,50)
+
+CREATE TABLE employee (
+    ssnum INT,	
+    name VARCHAR(25),
+    dept VARCHAR(25),
+    salary DECIMAL(10,2),
+    numfriends INT);
+
+
+table2:
+n = input size
+student(ssnum, name, course, grade);
+	ssnum: int	i...n+1,  i is a random number in (n//2,n), to make some overlap between student and employee		primary key
+	name: text	Name1...Name{n+1}
+	course:text	(course1...course{i}) ,i=n//100
+	grade: int	(0,101)
+
+CREATE TABLE student (
+    ssnum INT,
+    name VARCHAR(50),  
+    course VARCHAR(50), 
+    grade INT
+);
+
+
+table3:
+uniform: n = input size // 100
+fractal: inputsize = 10^4, n = 8002
+	     inputsize = 10^6, n = 800001
+	     inputsize = 10^8, n = 800003
+techdept(dept, manager, location);
+	dept: text	Dept1...Deptn		primary key
+	manager: text	Manager1...Managern
+	location: text		Location1...Locationn
+
+CREATE TABLE techdept (
+    dept VARCHAR(25),
+    manager VARCHAR(25), 
+    location VARCHAR(50)
+);
+
+
