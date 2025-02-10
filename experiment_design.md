@@ -287,10 +287,10 @@ CREATE TABLE lineitemdenormalized (
     L_SHIPMODE CHAR(10),
     L_COMMENT VARCHAR(44),
     R_REGION TEXT,
-    PRIMARY KEY (L_ORDERKEY, L_LINENUMBER)  -- 联合主键
+    PRIMARY KEY (L_ORDERKEY, L_LINENUMBER)
 );
 
--- 2️⃣ 插入数据（不能用 `CREATE TABLE AS`）
+-- 2️ insert data
 INSERT INTO lineitemdenormalized 
 SELECT 
     L.L_ORDERKEY,
@@ -328,7 +328,11 @@ JOIN
 
 - only uniformly distributed data
 
-![image-20250209033907981](C:\Users\王天欣\AppData\Roaming\Typora\typora-user-images\image-20250209033907981.png)
+|                     | Access all fields                                       | Access only partial fields          |
+|---------------------|------------------------------------------------|--------------------------------|
+| No vertical partitioning | `SELECT * FROM account;`                        | `SELECT id, balance FROM account;` |
+| vertical partitioning | `SELECT * FROM account1`<br>`JOIN account2 ON account1.id = account2.id;` | `SELECT id, balance FROM account1;` |
+
 
 **table creation**
 
@@ -414,7 +418,7 @@ CREATE TABLE techdept (
 );
 
 CREATE TABLE employee (
-    ssnum INT PRIMARY KEY,  -- Clustered index (默认)
+    ssnum INT PRIMARY KEY,  -- Clustered index 
     name VARCHAR(25),
     dept VARCHAR(25) references techdept(dept),
     salary DECIMAL(10,2),
