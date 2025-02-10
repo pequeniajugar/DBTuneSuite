@@ -27,7 +27,7 @@ def generate_and_save_techdept(num_employees, batch_size, file_name="techdept.cs
 # Generate Uniformly Distributed dpt for employees
 def generate_uniform_dpts(num_employees):
     """Generate a uniformly distributed vendor ID list."""
-    base_dpts = list(range(1, num_employees//100 + 1))
+    base_dpts = [f"Dept{i}" for i in range(1, num_employees // 100 + 1)]
     dpts = (base_dpts * 101)[:num_employees]
     random.shuffle(dpts)
     return dpts  # Do NOT shuffle to maintain uniform distribution

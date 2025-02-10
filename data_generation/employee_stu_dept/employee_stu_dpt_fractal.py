@@ -51,7 +51,7 @@ def gen(frac, N):
         outvec = p + outvec
     
     random.shuffle(outvec)
-    return outvec
+    return [f"Dept{i}" for i in outvec]
 
 # Generate Employee Data in Batches
 def generate_and_save_employees(num_employees, batch_size, file_name="employees.csv"):
