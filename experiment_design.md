@@ -8,6 +8,10 @@ https://www.tpc.org/TPC_Documents_Current_Versions/pdf/TPC-H_v3.0.1.pdf
 
 only uniformly distributed data
 
+**SF**
+
+0.02 & 2
+
 **with denormalization**
 
 ```sql
@@ -30,7 +34,7 @@ and R_NAME = 'EUROPE';
 
 
 
-**mariadb**
+**mariadb** table creation
 
 ```sql
 CREATE TABLE region (
@@ -189,7 +193,7 @@ JOIN
 ALTER TABLE lineitemdenormalized ADD PRIMARY KEY (L_ORDERKEY, L_linenumber);
 ```
 
-**duckdb**
+**duckdb** table creation
 
 ```sql
 CREATE TABLE region (
@@ -326,6 +330,8 @@ JOIN
 
 ![image-20250209033907981](C:\Users\王天欣\AppData\Roaming\Typora\typora-user-images\image-20250209033907981.png)
 
+**table creation**
+
 ```sql
 CREATE TABLE account (
     id INT primary key, 
@@ -342,12 +348,16 @@ CREATE TABLE account2 (
 );
 ```
 
+**query**
+
 ```sql
 SELECT * FROM account;	
 Select account1.id, balance, homeaddress from account1, account2 where account1.id = account2.id
 SELECT id, balance FROM account;
 SELECT id, balance FROM account1;
 ```
+
+
 
 
 
@@ -392,7 +402,7 @@ tbc
    ```sql
    select dept from employee where ssnum = ?;
 
-**duckdb**
+**duckdb** table creation
 
 seems cannot do explicit index
 
@@ -418,9 +428,15 @@ CREATE TABLE student (
     grade INT
 );
 
+COPY employee FROM '/data/tw3090/dept/fractal7/employees_fractal_10_7.csv' WITH (HEADER TRUE, DELIMITER ',');
+
+COPY techdept FROM '/data/tw3090/dept/fractal7/techdept_fractal_10_7.csv' WITH (HEADER TRUE, DELIMITER ',');
+
+COPY student FROM '/data/tw3090/dept/fractal7/students_fractal_10_7.csv' WITH (HEADER TRUE, DELIMITER ',');
+
 ```
 
-**mariadb**
+**mariadb** table creation
 
 ```sql
 CREATE TABLE techdept (
@@ -430,7 +446,7 @@ CREATE TABLE techdept (
 );
 
 CREATE TABLE employee (
-    ssnum INT PRIMARY KEY,  -- Clustered index (默认)
+    ssnum INT,  -- Clustered index (默认)
     name VARCHAR(25),
     dept VARCHAR(25),
     salary DECIMAL(10,2),
@@ -444,6 +460,27 @@ CREATE TABLE student (
     grade INT
 );
 
+LOAD DATA LOCAL INFILE '/data/tw3090/dept/fractal5/employees_fractal_10_7.csv'
+INTO TABLE employee
+FIELDS TERMINATED BY ','
+LINES TERMINATED BY '\n'
+IGNORE 1 ROWS;
+
+
+LOAD DATA LOCAL INFILE '/data/tw3090/dept/fractal5/techdept_fractal_10_7.csv'
+INTO TABLE techdept
+FIELDS TERMINATED BY ','
+LINES TERMINATED BY '\n'
+IGNORE 1 ROWS;
+
+
+LOAD DATA LOCAL INFILE '/data/tw3090/dept/fractal5/students_fractal_10_7.csv'
+INTO TABLE student
+FIELDS TERMINATED BY ','
+LINES TERMINATED BY '\n'
+IGNORE 1 ROWS;
+
+
 -- key
 ALTER TABLE employee 
 ADD PRIMARY KEY (ssnum);
@@ -456,8 +493,7 @@ ADD PRIMARY KEY (dept);
 
 ALTER TABLE employee 
 ADD CONSTRAINT fk_employee_dept 
-FOREIGN KEY (dept) REFERENCES techdept(dept) 
-ON DELETE CASCADE ON UPDATE CASCADE;
+FOREIGN KEY (dept) REFERENCES techdept(dept);
 
 -- index
 CREATE UNIQUE CLUSTERED INDEX i1 ON employee (ssnum);  -- MySQL InnoDB default PK is Clustered
@@ -473,7 +509,9 @@ CREATE UNIQUE CLUSTERED INDEX i6 ON techdept (dept);  -- MySQL InnoDB default PK
 
 ##  correlated subqueries
 
-use employee techdpt 
+**table**
+
+use employee techdpt student
 
 **data type**
 
@@ -508,7 +546,9 @@ and employee.dept = temp.dept;
 
 ##  eliminate unneeded distinct
 
-use employee techdpt
+**table**
+
+use employee techdpt student
 
 **data type**
 
