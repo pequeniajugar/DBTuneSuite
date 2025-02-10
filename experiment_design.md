@@ -380,7 +380,18 @@ tbc
 - uniformly distributed data
 - fractally distributed data
 
-![image-20250209034608374](C:\Users\王天欣\AppData\Roaming\Typora\typora-user-images\image-20250209034608374.png)
+**settings**
+employee(*ssnum*,  name,  dept, salary, numfriends);
+student(*ssnum*, name, course, grade);
+techdept(*dept*, manager, location);
+
+clustered    index i1 on employee (ssnum);
+nonclustered index i2 on employee (name);
+nonclustered index i3 on employee (dept);
+clustered    index i4 on student  (ssnum);
+nonclustered index i5 on student  (name);
+clustered    index i6 on techdept (dept);
+
 
 **query**
 
