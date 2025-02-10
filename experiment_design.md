@@ -382,14 +382,21 @@ tbc
 
 **settings**
 employee(*ssnum*,  name,  dept, salary, numfriends);
+
 student(*ssnum*, name, course, grade);
+
 techdept(*dept*, manager, location);
 
 clustered    index i1 on employee (ssnum);
+
 nonclustered index i2 on employee (name);
+
 nonclustered index i3 on employee (dept);
+
 clustered    index i4 on student  (ssnum);
+
 nonclustered index i5 on student  (name);
+
 clustered    index i6 on techdept (dept);
 
 
