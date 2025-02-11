@@ -542,7 +542,7 @@ use employee techdpt student
 
 **query**
 
-without subqueries
+with correlated subqueries
 
 ```sql
 select ssnum 
@@ -553,7 +553,7 @@ where salary =
      where e2.dept = e1.dept);
 ```
 
-with subqueries
+rewritten
 
 ```sql
 select max(salary) as bigsalary, dept
