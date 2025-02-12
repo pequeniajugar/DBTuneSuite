@@ -42,7 +42,7 @@ CREATE TABLE region (
     R_NAME CHAR(25),              -- Fixed text, size 25
     R_COMMENT VARCHAR(152)        -- Variable text, size 152
 );
-LOAD DATA LOCAL INFILE '/data/tw3090/tpch/tpch10_6/region.tbl' 
+LOAD DATA LOCAL INFILE '/data/tw3090/tpch/tpch10_5/region.tbl' 
 INTO TABLE region
 FIELDS TERMINATED BY '|'
 LINES TERMINATED BY '\n';
@@ -56,7 +56,7 @@ CREATE TABLE nation (
     N_COMMENT VARCHAR(152)        -- Variable text, size 152
 );
 
-LOAD DATA LOCAL INFILE '/data/tw3090/tpch/tpch10_6/nation.tbl' 
+LOAD DATA LOCAL INFILE '/data/tw3090/tpch/tpch10_5/nation.tbl' 
 INTO TABLE nation
 FIELDS TERMINATED BY '|'
 LINES TERMINATED BY '\n';
@@ -78,7 +78,7 @@ CREATE TABLE supplier (
     S_COMMENT VARCHAR(101)      -- Variable text, size 101
 );
 
-LOAD DATA LOCAL INFILE '/data/tw3090/tpch/tpch10_6/supplier.tbl' 
+LOAD DATA LOCAL INFILE '/data/tw3090/tpch/tpch10_7/supplier.tbl' 
 INTO TABLE supplier
 FIELDS TERMINATED BY '|'
 LINES TERMINATED BY '\n';
@@ -93,20 +93,19 @@ ADD CONSTRAINT fk_supplier_nation FOREIGN KEY (S_NATIONKEY) REFERENCES nation(N_
 ```sql
 CREATE TABLE partsupp (
     PS_PARTKEY INT,
-    PS_SUPPKEY INT references supplier(S_SUPPKEY),
+    PS_SUPPKEY INT,
     PS_AVAILQTY INT,
     PS_SUPPLYCOST DECIMAL(15, 2),
-    PS_COMMENT VARCHAR(44),
-    PRIMARY KEY (PS_PARTKEY, PS_SUPPKEY)
+    PS_COMMENT VARCHAR(44)
 );
 
-LOAD DATA LOCAL INFILE '/data/tw3090/tpch/tpch10_6/filtered_partsupp.tbl' 
+LOAD DATA LOCAL INFILE '/data/tw3090/tpch/tpch10_7/partsupp.tbl' 
 INTO TABLE partsupp
 FIELDS TERMINATED BY '|'
 LINES TERMINATED BY '\n';
 
 ALTER TABLE partsupp ADD PRIMARY KEY (PS_PARTKEY, PS_SUPPKEY);
-ALTER TABLE ADD CONSTRAINT fk_partsupp_supplier FOREIGN KEY (PS_SUPPKEY) REFERENCES supplier(S_SUPPKEY);
+ALTER TABLE partsupp ADD CONSTRAINT fk_partsupp_supplier FOREIGN KEY (PS_SUPPKEY) REFERENCES supplier(S_SUPPKEY);
 ```
 
 ```sql
@@ -126,15 +125,19 @@ CREATE TABLE lineitem (
     L_RECEIPTDATE DATE,              -- Date for receipt
     L_SHIPINSTRUCT CHAR(25),         -- Fixed text, size 25
     L_SHIPMODE CHAR(10),             -- Fixed text, size 10
-    L_COMMENT VARCHAR(44),            -- Variable text, size 44
+    L_COMMENT VARCHAR(44)            -- Variable text, size 44
 );
 
-LOAD DATA LOCAL INFILE '/data/tw3090/tpch/tpch10_8/filtered_lineitem.tbl' 
+LOAD DATA LOCAL INFILE '/data/tw3090/tpch/tpch10_7/lineitem.tbl' 
 INTO TABLE lineitem
 FIELDS TERMINATED BY '|'
 LINES TERMINATED BY '\n';
 
 ALTER TABLE lineitem ADD PRIMARY KEY (L_ORDERKEY, L_LINENUMBER);
+ALTER TABLE lineitem ADD CONSTRAINT fk_lineitem_partsupp1 FOREIGN KEY L_PARTKEY REFERENCES partsupp(PS_PARTKEY);
+select count(*) from region;
+ALTER TABLE lineitem ADD CONSTRAINT fk_lineitem_partsupp2 FOREIGN KEY L_SUPPKEY REFERENCES partsupp(PS_SUPPKEY);
+
 ALTER TABLE lineitem ADD CONSTRAINT fk_lineitem_partsupp FOREIGN KEY (L_PARTKEY, L_SUPPKEY) REFERENCES partsupp(PS_PARTKEY, PS_SUPPKEY);
 ```
 
@@ -227,7 +230,7 @@ CREATE TABLE supplier (
     S_COMMENT VARCHAR(101)      -- Variable text, size 101
 );
 
-COPY supplier FROM '/data/tw3090/tpch/tpch10_8/supplier.tbl' (DELIMITER '|', HEADER FALSE);
+COPY supplier FROM '/data/tw3090/tpch/tpch10_7/supplier.tbl' (DELIMITER '|', HEADER FALSE);
 ```
 
 ```sql
@@ -240,7 +243,7 @@ CREATE TABLE partsupp (
     PRIMARY KEY (PS_PARTKEY, PS_SUPPKEY)
 );
 
-COPY partsupp FROM '/data/tw3090/tpch/tpch10_8/partsupp.tbl' (DELIMITER '|', HEADER FALSE);
+COPY partsupp FROM '/data/tw3090/tpch/tpch10_7/partsupp.tbl' (DELIMITER '|', HEADER FALSE);
 ```
 
 ```sql
@@ -265,7 +268,7 @@ primary key (L_ORDERKEY, L_LINENUMBER),
 FOREIGN KEY (L_PARTKEY, L_SUPPKEY) REFERENCES partsupp(PS_PARTKEY, PS_SUPPKEY)
 );
 
-COPY lineitem FROM '/data/tw3090/tpch/tpch10_8/lineitem.tbl' (DELIMITER '|', HEADER FALSE);
+COPY lineitem FROM '/data/tw3090/tpch/tpch10_7/lineitem.tbl' (DELIMITER '|', HEADER FALSE);
 ```
 
 ```sql
@@ -287,10 +290,10 @@ CREATE TABLE lineitemdenormalized (
     L_SHIPMODE CHAR(10),
     L_COMMENT VARCHAR(44),
     R_REGION TEXT,
-    PRIMARY KEY (L_ORDERKEY, L_LINENUMBER)  -- 联合主键
+    PRIMARY KEY (L_ORDERKEY, L_LINENUMBER)
 );
 
--- 2️⃣ 插入数据（不能用 `CREATE TABLE AS`）
+-- insert data
 INSERT INTO lineitemdenormalized 
 SELECT 
     L.L_ORDERKEY,
@@ -365,7 +368,9 @@ SELECT id, balance FROM account1;
 
 tbc
 
+![image-20250212110139460](C:\Users\王天欣\AppData\Roaming\Typora\typora-user-images\image-20250212110139460.png)
 
+several account with the same value on the column of %access?
 
 
 
@@ -394,13 +399,14 @@ tbc
    with view on join
 
    ```sql
-   select dept from techlocation where ssnum = ?; -- becomes a join on employee, techdept.
+   select dept from techlocation where ssnum = 7891; -- becomes a join on employee, techdept.
    ```
 
    without view on join
 
    ```sql
-   select dept from employee where ssnum = ?;
+   select dept from employee where ssnum = 7891;
+   ```
 
 **duckdb** table creation
 
@@ -414,7 +420,7 @@ CREATE TABLE techdept (
 );
 
 CREATE TABLE employee (
-    ssnum INT PRIMARY KEY,  -- Clustered index (默认)
+    ssnum INT PRIMARY KEY,  -- Clustered index
     name VARCHAR(25),
     dept VARCHAR(25) references techdept(dept),
     salary DECIMAL(10,2),
@@ -520,7 +526,7 @@ use employee techdpt student
 
 **query**
 
-without subqueries
+with correlated subqueries
 
 ```sql
 select ssnum 
@@ -531,9 +537,10 @@ where salary =
      where e2.dept = e1.dept);
 ```
 
-with subqueries
+rewritten
 
 ```sql
+-- template, not using!!
 select max(salary) as bigsalary, dept
 into TEMP 
 from employee group by dept;
@@ -542,6 +549,28 @@ select ssnum
 from employee, TEMP
 where salary = bigsalary
 and employee.dept = temp.dept;
+
+-- 1.
+SELECT e1.ssnum
+FROM employee e1
+JOIN (
+    SELECT dept, MAX(salary) AS bigsalary
+    FROM employee
+    GROUP BY dept
+) e2 
+ON e1.dept = e2.dept AND e1.salary = e2.bigsalary;
+
+-- 2.
+WITH max_salary_per_dept AS (
+    SELECT dept, MAX(salary) AS bigsalary
+    FROM employee
+    GROUP BY dept
+)
+SELECT e1.ssnum
+FROM employee e1
+JOIN max_salary_per_dept m
+ON e1.dept = m.dept AND e1.salary = m.bigsalary;
+
 ```
 
 ##  eliminate unneeded distinct
