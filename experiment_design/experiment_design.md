@@ -651,6 +651,11 @@ Use employee dataset
 
 ![image-20250209033907981](images/cursors_are_death_data.png)
 
+**data type**
+
+- uniformly distributed data
+- fractally distributed data
+
 **query**
 
 No cursor
