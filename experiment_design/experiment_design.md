@@ -643,6 +643,33 @@ DELIMITER ;
 CALL get_lineitems();
 ```
 
+## Cursors are death
+
+**table**
+
+Use employee dataset
+
+![image-20250209033907981](images/cursors_are_death.png)
+
+**query**
+
+No cursor
+
+```sql
+select * from employees;
+```
+
+Cursor
+
+```sql
+DECLARE d_cursor CURSOR FOR select * from employees;
+OPEN d_cursorwhile (@@FETCH_STATUS = 0)
+BEGIN
+    FETCH NEXT from d_cursorEND
+CLOSE d_cursor
+go
+```
+
 ## Retrieve Needed Columns
 
 **table**
