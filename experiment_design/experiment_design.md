@@ -603,3 +603,42 @@ FROM employee, tech
 WHERE employee.dept = tech.dept
 ```
 
+##  Looping can hurt
+
+**table**
+
+use TPC_H dataset
+
+![image-20250209033907981](images/looping_can_hurt_data.png)
+
+**query**
+
+![image-20250209033907981](images/looping_can_hurt_query.png)
+
+No loop
+
+```sql
+SELECT * FROM lineitem WHERE l_partkey < 200;
+```
+
+Loop
+
+```sql
+PREPARE stmt FROM 'SELECT * FROM lineitem WHERE l_partkey = ?';
+
+DELIMITER //
+CREATE PROCEDURE get_lineitems()
+BEGIN
+    DECLARE i INT DEFAULT 1;
+    
+    WHILE i < 200 DO
+        SET @param = i;
+        EXECUTE stmt USING @param;
+        SET i = i + 1;
+    END WHILE;
+    
+END //
+DELIMITER ;
+
+CALL get_lineitems();
+```
