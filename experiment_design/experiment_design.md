@@ -642,3 +642,25 @@ DELIMITER ;
 
 CALL get_lineitems();
 ```
+
+## Retrieve Needed Columns
+
+**table**
+
+use TPC_H dataset
+
+![image-20250209033907981](images/retrieve_needed_columns.png)
+
+**query**
+
+All
+
+```sql
+SELECT * FROM lineitem
+```
+
+Covered Subset
+
+```sql
+Select l_orderkey, l_partkey, l_suppkey, l_shipdate, l_commitdate from lineitem;
+```
