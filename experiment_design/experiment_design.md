@@ -664,3 +664,15 @@ Covered Subset
 ```sql
 Select l_orderkey, l_partkey, l_suppkey, l_shipdate, l_commitdate from lineitem;
 ```
+
+## Bulk Loading Data
+
+**table**
+
+use TPC_H dataset
+
+![image-20250209033907981](images/bulk_loading_data.png)
+
+**query**
+
+![image-20250209033907981](images/bulk_loading_query.png)
