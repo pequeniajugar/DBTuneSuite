@@ -649,7 +649,7 @@ CALL get_lineitems();
 
 Use employee dataset
 
-![image-20250209033907981](images/cursors_are_death.png)
+![image-20250209033907981](images/cursors_are_death_data.png)
 
 **query**
 
