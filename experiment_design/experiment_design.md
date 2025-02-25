@@ -370,9 +370,16 @@ tbc
 
 ![image-20250212110139460](images/vertical_partition_point.png)
 
-several account with the same value on the column of %access?
+we have 1 million rows, R has 1 million rows, R[X,Y] has 1 million rows, R[X,Z] has one million rows.
 
+generate 100 queries
 
+80% of access that only concern XY: 
+
+- 80 of them are of the form Select X,Y from ... where X = ...
+- 20 of them are of the form Select X,Y,Z from ... where X = ... 
+
+see github experiement_design/query/vertical_partitioning_pointquery for queries provided for n = 0, 20, 40, 60, 80, 100
 
 ##  View on Join
 
@@ -410,7 +417,56 @@ several account with the same value on the column of %access?
 
 **duckdb** table creation
 
-seems cannot do explicit index
+since duckdb cannot do traditional clustered and unclustered index
+
+use the following method to simulate
+
+for techdept:
+
+```  sh
+ (head -n 1 techdept*.csv && tail -n +2 techdept*.csv | sort -t, -k1,1) > n_techdept_fractal_10_7.csv
+```
+
+for employee:
+
+```  sh
+# 1. get header
+head -n 1 employee*.csv > n_employees_fractal_10_7.csv
+
+# 2. randomize name,dept
+tail -n +2 employee*.csv | awk -F, '{print $2}' | shuf --random-source=<(yes 42) > shuffled_name.txt
+tail -n +2 employee*.csv | awk -F, '{print $3}' | shuf --random-source=<(yes 42) > shuffled_dept.txt
+tail -n +2 employee*.csv | awk -F, '{print $1, $4, $5}' OFS=, > fixed_cols.txt
+
+# 3. merge data
+paste -d, fixed_cols.txt shuffled_name.txt shuffled_dept.txt >> n_employees_fractal_10_7.csv
+
+# 4. clean temporary files
+rm -rf shuffled_name.txt shuffled_dept.txt fixed_cols.txt
+
+```
+
+for student:
+
+``` sh
+# 1. get header
+head -n 1 student*.csv > n_students_fractal_10_7.csv
+
+# 2. randomize name
+tail -n +2 student*.csv | awk -F, '{print $2}' | shuf --random-source=<(yes 42) > shuffled_name.txt
+tail -n +2 student*.csv | awk -F, '{print $1}' > col1.txt 
+tail -n +2 student*.csv | awk -F, '{print $3, $4}' OFS=, > col3_4.txt 
+
+# 3. merge data
+paste -d, col1.txt shuffled_name.txt col3_4.txt >> n_students_fractal_10_7.csv
+
+# 4. clean temporary files
+rm -rf shuffled_name.txt col1.txt col3_4.txt
+
+
+```
+
+
 
 ```sql
 CREATE TABLE techdept (
@@ -434,11 +490,18 @@ CREATE TABLE student (
     grade INT
 );
 
-COPY employee FROM '/data/tw3090/dept/fractal7/employees_fractal_10_7.csv' WITH (HEADER TRUE, DELIMITER ',');
+COPY employee FROM '/data/tw3090/dept/fractal5/employees_fractal_10_5.csv' WITH (HEADER TRUE, DELIMITER ',');
 
-COPY techdept FROM '/data/tw3090/dept/fractal7/techdept_fractal_10_7.csv' WITH (HEADER TRUE, DELIMITER ',');
+COPY techdept FROM '/data/tw3090/dept/fractal5/n_techdept_fractal_10_5.csv' WITH (HEADER TRUE, DELIMITER ',');
 
-COPY student FROM '/data/tw3090/dept/fractal7/students_fractal_10_7.csv' WITH (HEADER TRUE, DELIMITER ',');
+COPY student FROM '/data/tw3090/dept/fractal5/students_fractal_10_5.csv' WITH (HEADER TRUE, DELIMITER ',');
+
+CREATE INDEX i1 ON employee (ssnum);   -- ART index
+CREATE INDEX i2 ON employee (name);    
+CREATE INDEX i3 ON employee (dept);   
+CREATE INDEX i4 ON student (ssnum);    
+CREATE INDEX i5 ON student (name);   
+CREATE INDEX i6 ON techdept (dept);   
 
 ```
 
@@ -590,8 +653,8 @@ without eliminating unneeded distinct
 
 ```sql
 SELECT DISTINCT ssnum
-FROM employee, tech
-WHERE employee.dept = tech.dept
+FROM employee, techdept
+WHERE employee.dept = techdept.dept;
 
 ```
 
@@ -599,8 +662,8 @@ with eliminating unneeded distinct
 
 ```sql
 SELECT ssnum
-FROM employee, tech
-WHERE employee.dept = tech.dept
+FROM employee, techdept
+WHERE employee.dept = techdept.dept;
 ```
 
 ##  Looping can hurt
@@ -624,24 +687,31 @@ SELECT * FROM lineitem WHERE l_partkey < 200;
 Loop
 
 ```sql
-PREPARE stmt FROM 'SELECT * FROM lineitem WHERE l_partkey = ?';
-
 DELIMITER //
 CREATE PROCEDURE get_lineitems()
 BEGIN
     DECLARE i INT DEFAULT 1;
     
+    -- declare PREPARE
+    PREPARE stmt FROM 'SELECT * FROM lineitem WHERE l_partkey = ?';
+
     WHILE i < 200 DO
         SET @param = i;
         EXECUTE stmt USING @param;
         SET i = i + 1;
     END WHILE;
-    
+
+    -- release prepared statement
+    DEALLOCATE PREPARE stmt;
+
 END //
 DELIMITER ;
 
+
 CALL get_lineitems();
 ```
+
+no duckdb
 
 ## Cursors are death
 
@@ -654,7 +724,31 @@ Use employee dataset
 **data type**
 
 - uniformly distributed data
-- fractally distributed data
+
+**table creation**
+
+```sql
+CREATE TABLE employees (
+    ssnum INT,
+    name VARCHAR(255),
+    lat DECIMAL(10,2),
+    longitude DECIMAL(10,2),  -- change long → longitude
+    hundreds1 INT,
+    hundreds2 INT
+);
+
+    
+LOAD DATA LOCAL INFILE '/data/tw3090/employee/employees_10_7.csv'
+INTO TABLE employees
+FIELDS TERMINATED BY ','
+LINES TERMINATED BY '\n'
+IGNORE 1 ROWS;
+
+ALTER TABLE employees ADD PRIMARY KEY (ssnum);
+
+```
+
+
 
 **query**
 
@@ -675,6 +769,54 @@ CLOSE d_cursor
 go
 ```
 
+```sql
+--  for mariadb?
+DELIMITER //
+
+CREATE PROCEDURE fetch_employees()
+BEGIN
+    DECLARE done INT DEFAULT FALSE;
+    DECLARE emp_ssnum INT;
+    DECLARE emp_name VARCHAR(255);
+    DECLARE emp_lat DECIMAL(10,2);
+    DECLARE emp_longitude DECIMAL(10,2);
+    DECLARE emp_hundreds1 INT;
+    DECLARE emp_hundreds2 INT;
+
+    -- DECLARE cursor
+    DECLARE emp_cursor CURSOR FOR 
+        SELECT ssnum, name, lat, longitude, hundreds1, hundreds2 FROM employees;
+
+    -- finish dealing with cursor
+    DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = TRUE;
+
+    -- open cursor
+    OPEN emp_cursor;
+
+    -- read cursor
+    read_loop: LOOP
+        FETCH emp_cursor INTO emp_ssnum, emp_name, emp_lat, emp_longitude, emp_hundreds1, emp_hundreds2;
+        IF done THEN
+            LEAVE read_loop;
+        END IF;
+        
+        -- print line by line
+        SELECT emp_ssnum AS SSN, emp_name AS Name, emp_lat AS Latitude, emp_longitude AS Longitude, emp_hundreds1, emp_hundreds2;
+    END LOOP;
+
+    -- close cursor
+    CLOSE emp_cursor;
+END//
+
+DELIMITER ;
+
+
+```
+
+
+
+no duckdb
+
 ## Retrieve Needed Columns
 
 **table**
@@ -683,12 +825,18 @@ use TPC_H dataset
 
 ![image-20250209033907981](images/retrieve_needed_columns.png)
 
+```sql
+create index i_nc_lineitem on lineitem (l_orderkey, l_partkey, l_suppkey, l_shipdate, l_commitdate);
+```
+
+
+
 **query**
 
 All
 
 ```sql
-SELECT * FROM lineitem
+SELECT * FROM lineitem;
 ```
 
 Covered Subset
