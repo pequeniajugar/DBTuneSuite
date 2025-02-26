@@ -366,8 +366,6 @@ SELECT id, balance FROM account1;
 
 ###  point query
 
-tbc
-
 ![image-20250212110139460](images/vertical_partition_point.png)
 
 we have 1 million rows, R has 1 million rows, R[X,Y] has 1 million rows, R[X,Z] has one million rows.
@@ -770,7 +768,8 @@ go
 ```
 
 ```sql
---  for mariadb?
+--  for mariadb
+--  use store procedure
 DELIMITER //
 
 CREATE PROCEDURE fetch_employees()
@@ -810,10 +809,7 @@ END//
 
 DELIMITER ;
 
-
 ```
-
-
 
 no duckdb
 
@@ -847,6 +843,8 @@ Select l_orderkey, l_partkey, l_suppkey, l_shipdate, l_commitdate from lineitem;
 
 ## Bulk Loading Data
 
+###  direct path
+
 **table**
 
 use TPC_H dataset
@@ -856,3 +854,72 @@ use TPC_H dataset
 **query**
 
 ![image-20250209033907981](images/bulk_loading_query.png)
+
+use .py files to implement insert
+
+###  batch size
+
+![image-20250225224112946](C:\Users\王天欣\AppData\Roaming\Typora\typora-user-images\image-20250225224112946.png)
+
+use .py files to implement insert
+
+##  clustered index
+
+**table**
+
+employees
+
+![image-20250209033907982](images/index_setting.png)
+
+Let's say there are N rows in the employee table.
+For long, lat, hundreds1, hundreds2, name, create a set of vectors having N/100 values for each of them.
+Permute those values independently.
+
+hundreds1: 1, 3, 8, 6, 3, ... up to the Nth number
+hundreds2: 12, 28, 2, 4, .... up to Nth number
+
+There will be repeats because while there N rows, there are only N/100 distinct values for each of these attributes
+
+**query**
+
+clustered index
+
+```sql
+select * from employees where hundreds1 = 800; 
+```
+
+nonclustered index
+
+```sql
+select * from employees where hundreds2= 800;
+```
+
+no index
+
+```sql
+select * from employees where long = 100;
+```
+
+
+
+##  covering index
+
+![image-20250209033907982](images/covering_index.png)
+
+```sql
+select ssnum, name where lat = 100;
+```
+
+```sql
+select ssnum, hundreds2 where name = 'name10';
+```
+
+##  scan wins
+
+1. index (hundreds1)
+2. no index(hundreds1)
+
+```sql
+select * from employees where hundreds1 < 200;
+```
+
