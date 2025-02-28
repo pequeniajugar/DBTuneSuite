@@ -22,11 +22,16 @@ def generate_employees(num_employees, batch_size=1_000_000, file_name="employees
 
     # **Generate unique values**
     unique_names = [f"name{i}" for i in range(unique_count)]
-    unique_lats = np.round(np.linspace(-90.0, 90.0, unique_count), 2)  # Evenly spaced latitudes
-    unique_longs = np.round(np.linspace(-180.0, 180.0, unique_count), 2)  # Evenly spaced longitudes
+    unique_lats = np.round(np.linspace(-9000.0, 9000.0, unique_count), 2)  # Evenly spaced latitudes
+    unique_longs = np.round(np.linspace(-18000.0, 18000.0, unique_count), 2)  # Evenly spaced longitudes
 
     # **Generate globally sorted 'hundreds1'**
-    global_hundreds1 = np.linspace(100, 999, num_employees, dtype=int)  # Fully sorted
+    # Generate unique values starting from 100, each increasing by 1
+    unique_hundreds1 = np.arange(100, 100 + unique_count, dtype=int)
+
+
+    # Repeat each value 100 times
+    global_hundreds1 = np.repeat(unique_hundreds1, 100)
     global_hundreds2 = global_hundreds1.copy()  # Keep identical to hundreds1
 
     # **Write header to file**
