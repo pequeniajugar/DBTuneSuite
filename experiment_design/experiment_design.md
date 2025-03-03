@@ -884,9 +884,9 @@ There will be repeats because while there N rows, there are only N/100 distinct 
 
 ```sql
 -- if no explict clustered/nonclustered index
-CREATE INDEX idx_c ON employees (hundreds1);  -- 原本的聚簇索引
-CREATE INDEX idx_nc ON employees (hundreds2);  -- 非聚簇索引
-CREATE INDEX idx_nc3 ON employees (ssnum, name, hundreds2);  -- 复合索引
+CREATE INDEX idx_c ON employees (hundreds1); 
+CREATE INDEX idx_nc ON employees (hundreds2);
+CREATE INDEX idx_nc3 ON employees (ssnum, name, hundreds2);
 CREATE INDEX idx_nc4 ON employees (lat, ssnum, name);
 ```
 
@@ -918,13 +918,21 @@ select * from employees where longitude = 100;
 
 ![image-20250209033907982](images/covering_index.png)
 
+**query**
+
+covering 
+
 ```sql
 select ssnum, name where lat = 100;
 ```
 
+covering - not ordered
+
 ```sql
 select ssnum, hundreds2 where name = 'name10';
 ```
+
+
 
 ##  scan wins
 
