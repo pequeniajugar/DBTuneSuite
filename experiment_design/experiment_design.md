@@ -909,7 +909,8 @@ select * from employees where hundreds2= 800;
 no index
 
 ```sql
-select * from employees where longitude = 100;
+select * from employees where longitude = 8018.02;-- 10^5
+select * from employees where longitude = 2108;-- 10^7
 ```
 
 
@@ -923,7 +924,8 @@ select * from employees where longitude = 100;
 covering 
 
 ```sql
-select ssnum, name where lat = 100;
+select ssnum, name where lat = 4009.01;-- 10^5
+select ssnum, name where lat = 1054;-- 10^7
 ```
 
 covering - not ordered
