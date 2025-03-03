@@ -727,7 +727,7 @@ Use employee dataset
 
 ```sql
 CREATE TABLE employees (
-    ssnum INT,
+    ssnum INT primary key,
     name VARCHAR(255),
     lat DECIMAL(10,2),
     longitude DECIMAL(10,2),  -- change long → longitude
@@ -736,11 +736,13 @@ CREATE TABLE employees (
 );
 
     
-LOAD DATA LOCAL INFILE '/data/tw3090/employee/employees_10_7.csv'
+LOAD DATA LOCAL INFILE '/data/tw3090/employee/employeesindex_10_7.csv'
 INTO TABLE employees
 FIELDS TERMINATED BY ','
 LINES TERMINATED BY '\n'
 IGNORE 1 ROWS;
+
+COPY employees FROM '/data/tw3090/employee/employeesindex_10_7.csv' WITH (HEADER TRUE, DELIMITER ',');
 
 ALTER TABLE employees ADD PRIMARY KEY (ssnum);
 
@@ -880,6 +882,16 @@ hundreds2: 12, 28, 2, 4, .... up to Nth number
 
 There will be repeats because while there N rows, there are only N/100 distinct values for each of these attributes
 
+```sql
+-- if no explict clustered/nonclustered index
+CREATE INDEX idx_c ON employees (hundreds1);  -- 原本的聚簇索引
+CREATE INDEX idx_nc ON employees (hundreds2);  -- 非聚簇索引
+CREATE INDEX idx_nc3 ON employees (ssnum, name, hundreds2);  -- 复合索引
+CREATE INDEX idx_nc4 ON employees (lat, ssnum, name);
+```
+
+
+
 **query**
 
 clustered index
@@ -897,7 +909,7 @@ select * from employees where hundreds2= 800;
 no index
 
 ```sql
-select * from employees where long = 100;
+select * from employees where longitude = 100;
 ```
 
 
@@ -917,9 +929,13 @@ select ssnum, hundreds2 where name = 'name10';
 ##  scan wins
 
 1. index (hundreds1)
-2. no index(hundreds1)
+2. no index(hundreds2)
 
 ```sql
 select * from employees where hundreds1 < 200;
+```
+
+```sql
+select * from employees where hundreds2 < 200;
 ```
 
