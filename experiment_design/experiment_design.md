@@ -954,11 +954,12 @@ select * from employees where hundreds2 < 350; -- 25%
 
 -- 10^7
 select * from employees where hundreds2 = 5100; -- 0%
-select * from employees where hundreds2 < 10100; -- 5%
-select * from employees where hundreds2 < 15100; -- 10%
-select * from employees where hundreds2 < 20100; -- 15%
-select * from employees where hundreds2 < 25100; -- 20%
-select * from employees where hundreds2 < 30100; -- 25%
+select * from employees where hundreds2 < 5100; -- 5%
+select * from employees where hundreds2 < 10100; -- 10%
+select * from employees where hundreds2 < 15100; -- 15%
+select * from employees where hundreds2 < 20100; -- 20%
+select * from employees where hundreds2 < 25100; -- 25%
+
 
 ```
 
