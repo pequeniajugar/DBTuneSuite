@@ -924,28 +924,58 @@ select * from employees where longitude = 2108;-- 10^7
 covering 
 
 ```sql
-select ssnum, name where lat = 4009.01;-- 10^5
-select ssnum, name where lat = 1054;-- 10^7
+select ssnum, name from employees where lat = 4009.01;-- 10^5
+select ssnum, name from employees where lat = 1054;-- 10^7
 ```
 
 covering - not ordered
 
 ```sql
-select ssnum, hundreds2 where name = 'name10';
+select ssnum, hundreds2 from employees where name = 'name10';
 ```
 
 
 
 ##  scan wins
 
-1. index (hundreds1)
-2. no index(hundreds2)
+![image-20250209033907982](images/scan_win.png)
+
+1. index (hundreds2)
+2. no index(longitude)
 
 ```sql
-select * from employees where hundreds1 < 200;
+--  10^5
+select * from employees where hundreds2 = 150; -- 0%
+select * from employees where hundreds2 < 150; -- 5%
+select * from employees where hundreds2 < 200; -- 10%
+select * from employees where hundreds2 < 250; -- 15%
+select * from employees where hundreds2 < 300; -- 20%
+select * from employees where hundreds2 < 350; -- 25%
+
+-- 10^7
+select * from employees where hundreds2 = 5100; -- 0%
+select * from employees where hundreds2 < 10100; -- 5%
+select * from employees where hundreds2 < 15100; -- 10%
+select * from employees where hundreds2 < 20100; -- 15%
+select * from employees where hundreds2 < 25100; -- 20%
+select * from employees where hundreds2 < 30100; -- 25%
+
 ```
 
 ```sql
-select * from employees where hundreds2 < 200;
+-- 10^5
+select * from employees where longitude = -16234.23;
+select * from employees where longitude <= -16234.23;
+select * from employees where longitude <= -14432.43;
+select * from employees where longitude <= -12630.63;
+select * from employees where longitude <= -10828.83;
+select * from employees where longitude <= -9027.03;
+-- 10^7
+select * from employees where longitude = -16200.34;
+select * from employees where longitude <= -16200.34;
+select * from employees where longitude <= -14400.32;
+select * from employees where longitude <= -12600.31;
+select * from employees where longitude <= -10800.29;
+select * from employees where longitude <= -9000.27;
 ```
 
