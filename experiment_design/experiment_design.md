@@ -983,3 +983,56 @@ select * from employees where longitude < 25100;
 ##  b-tree vs hash
 
 for 
+
+##  Aggregate Maintenance
+
+store dataset (only uniform dataset)
+
+Setting:
+```sql
+create clustered index i_item on item(itemnum);
+
+create trigger updateVendorOutstanding on orders for insert as
+update vendorOutstanding
+set amount = 
+	(select vendorOutstanding.amount+sum(inserted.quantity*item.price)
+	from inserted,item
+	where inserted.itemnum = item.itemnum
+	)
+where vendorid = (select vendorid from inserted) ;
+
+create trigger updateStoreOutstanding on orders for insert as
+update storeOutstanding
+set amount = 
+	(select storeOutstanding.amount+sum(inserted.quantity*item.price)
+	 from inserted,item
+	 where inserted.itemnum = item.itemnum
+	)
+where storeid = (select storeid from inserted)
+```
+
+Insert
+```sql
+insert into orders values(1000350,7825,562,'xxxxxx6944','vendor4');
+```
+
+Without redundant tables
+```sql
+select orders.vendor, sum(orders.quantity*item.price)
+		from orders,item
+		where orders.itemnum = item.itemnum
+		group by orders.vendorid;
+
+select store.storeid, sum(orders.quantity*item.price)
+		from orders,item, store
+		where orders.itemnum = item.itemnum
+  		  and orders.storename = store.name
+		group by store.storeid;
+```
+
+With redundant tables
+```sql
+select * from vendorOutstanding;
+
+select * from storeOutstanding;
+```
