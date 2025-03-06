@@ -1022,7 +1022,8 @@ select orders.vendor, sum(orders.quantity*item.price)
 		from orders,item
 		where orders.itemnum = item.itemnum
 		group by orders.vendorid;
-
+```
+```sql
 select store.storeid, sum(orders.quantity*item.price)
 		from orders,item, store
 		where orders.itemnum = item.itemnum
@@ -1033,6 +1034,7 @@ select store.storeid, sum(orders.quantity*item.price)
 With redundant tables
 ```sql
 select * from vendorOutstanding;
-
+```
+```sql
 select * from storeOutstanding;
 ```
