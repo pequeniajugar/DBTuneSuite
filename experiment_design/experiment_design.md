@@ -1013,7 +1013,7 @@ where storeid = (select storeid from inserted)
 
 Insert
 ```sql
-insert into orders values(1000350,7825,562,'xxxxxx6944','vendor4');
+insert into orders values (1000350,7825,562,'xxxxxx6944','vendor4');
 ```
 
 Without redundant tables
