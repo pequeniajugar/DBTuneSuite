@@ -22,17 +22,15 @@ def generate_employees(num_employees, batch_size=1_000_000, file_name="employees
 
     # **Generate unique values**
     unique_names = [f"name{i}" for i in range(unique_count)]
-    unique_lats = np.round(np.linspace(-9000.0, 9000.0, unique_count), 2)  # Evenly spaced latitudes
-    unique_longs = np.round(np.linspace(-18000.0, 18000.0, unique_count), 2)  # Evenly spaced longitudes
+    unique_hundreds1 = np.arange(100, 100 + unique_count, dtype=int)  # Unique sorted values
+    unique_lats = np.copy(unique_hundreds1)  # Initially same as hundreds1
+    unique_longs = np.copy(unique_hundreds1)  # Initially same as hundreds1
 
-    # **Generate globally sorted 'hundreds1'**
-    # Generate unique values starting from 100, each increasing by 1
-    unique_hundreds1 = np.arange(100, 100 + unique_count, dtype=int)
-
-
-    # Repeat each value 100 times
-    global_hundreds1 = np.repeat(unique_hundreds1, 100)
-    global_hundreds2 = global_hundreds1.copy()  # Keep identical to hundreds1
+    # **Repeat unique values 100 times to get global sorted versions**
+    global_hundreds1 = np.repeat(unique_hundreds1, 100)  # Sorted
+    global_hundreds2 = global_hundreds1.copy()  # Will be shuffled
+    global_lats = global_hundreds1.copy()  # Will be shuffled
+    global_longs = global_hundreds1.copy()  # Will be shuffled
 
     # **Write header to file**
     with open(file_name, "w") as f:
@@ -49,29 +47,34 @@ def generate_employees(num_employees, batch_size=1_000_000, file_name="employees
         # **Extract corresponding sorted 'hundreds1'**
         sorted_hundreds1 = global_hundreds1[batch_start:batch_end]
         sorted_hundreds2 = global_hundreds2[batch_start:batch_end]
+        sorted_lats = global_lats[batch_start:batch_end]
+        sorted_longs = global_longs[batch_start:batch_end]
 
         # **Repeat unique values to fill batch**
         selected_names = np.tile(unique_names, (batch_size_actual // unique_count) + 1)[:batch_size_actual]
-        selected_lats = np.tile(unique_lats, (batch_size_actual // unique_count) + 1)[:batch_size_actual]
-        selected_longs = np.tile(unique_longs, (batch_size_actual // unique_count) + 1)[:batch_size_actual]
 
         # **Shuffle all columns except 'ssnum' and 'hundreds1'**
-        shuffle_indices = np.arange(batch_size_actual)
-        np.random.shuffle(shuffle_indices)
+        shuffle_indices_hundreds2 = np.arange(batch_size_actual)
+        shuffle_indices_lats = np.arange(batch_size_actual)
+        shuffle_indices_longs = np.arange(batch_size_actual)
 
-        selected_names = selected_names[shuffle_indices]
-        selected_lats = selected_lats[shuffle_indices]
-        selected_longs = selected_longs[shuffle_indices]
-        selected_hundreds2 = sorted_hundreds2[shuffle_indices]  # Only shuffle hundreds2
+        np.random.shuffle(shuffle_indices_hundreds2)
+        np.random.shuffle(shuffle_indices_lats)
+        np.random.shuffle(shuffle_indices_longs)
+
+        selected_names = selected_names[shuffle_indices_hundreds2]  # Names shuffled like hundreds2
+        selected_lats = sorted_lats[shuffle_indices_lats]  # Lat shuffled differently
+        selected_longs = sorted_longs[shuffle_indices_longs]  # Long shuffled differently
+        selected_hundreds2 = sorted_hundreds2[shuffle_indices_hundreds2]  # Shuffle hundreds2
 
         # **Create DataFrame**
         df = pd.DataFrame({
             "ssnum": ssnums,  # Already sorted
             "name": selected_names,
-            "lat": selected_lats,
-            "long": selected_longs,
+            "lat": selected_lats,  # Independent shuffle
+            "long": selected_longs,  # Independent shuffle
             "hundreds1": sorted_hundreds1,  # Globally sorted
-            "hundreds2": selected_hundreds2  # Shuffled
+            "hundreds2": selected_hundreds2  # Shuffled independently
         })
 
         # **Append batch to CSV file**
