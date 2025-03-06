@@ -965,18 +965,21 @@ select * from employees where hundreds2 < 25100; -- 25%
 
 ```sql
 -- 10^5
-select * from employees where longitude = -16234.23;
-select * from employees where longitude <= -16234.23;
-select * from employees where longitude <= -14432.43;
-select * from employees where longitude <= -12630.63;
-select * from employees where longitude <= -10828.83;
-select * from employees where longitude <= -9027.03;
+select * from employees where longitude = 150;
+select * from employees where longitude < 150;
+select * from employees where longitude < 200;
+select * from employees where longitude < 250;
+select * from employees where longitude < 300;
+select * from employees where longitude < 350;
 -- 10^7
-select * from employees where longitude = -16200.34;
-select * from employees where longitude <= -16200.34;
-select * from employees where longitude <= -14400.32;
-select * from employees where longitude <= -12600.31;
-select * from employees where longitude <= -10800.29;
-select * from employees where longitude <= -9000.27;
+select * from employees where longitude = 5100;
+select * from employees where longitude < 5100;
+select * from employees where longitude < 10100;
+select * from employees where longitude < 15100;
+select * from employees where longitude < 20100;
+select * from employees where longitude < 25100;
 ```
 
+##  b-tree vs hash
+
+for 
