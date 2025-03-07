@@ -984,7 +984,7 @@ select * from employees where longitude < 25100;
 
 for 
 
-##  Aggregate Maintenance
+##  Aggregate Maintenance --triggers
 
 store dataset (only uniform dataset)
 
@@ -1037,4 +1037,56 @@ select * from vendorOutstanding;
 ```
 ```sql
 select * from storeOutstanding;
+```
+
+## Multidimensional Indexes -- queries
+
+polygon dataset (to be generated)
+
+The following codes might only work for mysql and need to find equivalent data types for GEOMETRY in other dbms.
+
+Creating table
+```sql
+CREATE TABLE spatial_facts (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    a1 INT, a2 INT, a3 INT, a4 INT, a5 INT, a6 INT, a7 INT, a8 INT, a9 INT, a10 INT
+);
+
+#Insert data
+
+ALTER TABLE spatial_facts ADD COLUMN geom_a3_a7 GEOMETRY NOT NULL;
+
+UPDATE spatial_facts 
+SET geom_a3_a7 = ST_GeomFromText(CONCAT('POINT(', a3, ' ', a7, ')'));
+```
+
+Creating Index
+```sql
+ALTER TABLE spatial_facts ADD SPATIAL INDEX r_spatialfacts (geom_a3_a7);
+
+CREATE INDEX b2_spatialfacts ON spatial_facts(a3, a7);
+```
+
+Point Query
+```sql
+select count(*) from fact where a3 = 694014 and a7 = 928878;
+
+SELECT COUNT(*)
+FROM spatial_facts
+WHERE ST_Equals(
+    geom_a3_a7, 
+    ST_GeomFromText('POINT(694014 928878)')
+);
+```
+
+Range Query
+```sql
+select count(*) from spatial_facts where a3 > 10 and a3 < 1000000 and a7 > 800000 and a7 < 1000000;
+
+SELECT COUNT(*)
+FROM spatial_facts
+WHERE ST_Within(
+    geom_a3_a7, 
+    ST_PolygonFromText('POLYGON((10 800000, 1000000 800000, 1000000 1000000, 10 1000000, 10 800000))')
+);
 ```
