@@ -1093,6 +1093,8 @@ WHERE ST_Within(
 
 ## Value of Serializeable
 
+Look at mysql_concurrency.sh
+
 Settings
 ```sql
 accounts( number, branchnum,  balance);
@@ -1113,6 +1115,3 @@ UPDATE accounts SET balance=@valX WHERE number=2;
 UPDATE accounts SET balance=@valY WHERE number=1;
 COMMIT;
 ```
-
-Implement these threads in the sh script with both threads in background so it runs simultaneously. [add a & after the command line in the sh script to make it run in the background.]
-
