@@ -10,10 +10,10 @@ MYSQL_PORT=3306
 QUERY_T1="SELECT SUM(balance) FROM accounts;"
 QUERY_T2=$(cat <<EOF
 START TRANSACTION;
-SET @valX = (SELECT balance FROM accounts WHERE number=1);
-SET @valY = (SELECT balance FROM accounts WHERE number=2);
-UPDATE accounts SET balance=@valX WHERE number=2;
-UPDATE accounts SET balance=@valY WHERE number=1;
+UPDATE accounts a1
+JOIN accounts a2 ON a1.number = a2.number - 1
+SET a1.balance = a2.balance, a2.balance = a1.balance
+WHERE a1.number % 2 = 1;
 COMMIT;
 EOF
 )
