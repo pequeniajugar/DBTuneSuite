@@ -729,8 +729,8 @@ Use employee dataset
 CREATE TABLE employees (
     ssnum INT primary key,
     name VARCHAR(255),
-    lat DECIMAL(10,2),
-    longitude DECIMAL(10,2),  -- change long → longitude
+    lat INT,
+    longitude INT,  -- change long → longitude
     hundreds1 INT,
     hundreds2 INT
 );
@@ -1091,7 +1091,16 @@ UPDATE spatial_facts
 SET geom_a3_a7 = ST_GeomFromText(CONCAT('POINT(', a3, ' ', a7, ')'));
 ```
 
+the codes above seems,using spatial_without10_5.csv, it's a dataset without column geom_a3_a7
+
+the spatial_with10_5.csv is a dataset with column geom_a3_a7.
+
+
+
+
+
 Creating Index
+
 ```sql
 ALTER TABLE spatial_facts ADD SPATIAL INDEX r_spatialfacts (geom_a3_a7);
 
