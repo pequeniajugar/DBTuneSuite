@@ -946,19 +946,19 @@ select ssnum, hundreds2 from employees where name = 'name10';
 ```sql
 --  10^5
 select * from employees where hundreds2 = 150; -- 0%
+select * from employees where hundreds2 < 110; -- 0%
 select * from employees where hundreds2 < 150; -- 5%
 select * from employees where hundreds2 < 200; -- 10%
-select * from employees where hundreds2 < 250; -- 15%
 select * from employees where hundreds2 < 300; -- 20%
-select * from employees where hundreds2 < 350; -- 25%
+select * from employees where hundreds2 < 500; -- 40%
 
 -- 10^7
 select * from employees where hundreds2 = 5100; -- 0%
+select * from employees where hundreds2 < 1100; -- 1%
 select * from employees where hundreds2 < 5100; -- 5%
 select * from employees where hundreds2 < 10100; -- 10%
-select * from employees where hundreds2 < 15100; -- 15%
 select * from employees where hundreds2 < 20100; -- 20%
-select * from employees where hundreds2 < 25100; -- 25%
+select * from employees where hundreds2 < 40100; -- 40%
 
 
 ```
@@ -966,23 +966,54 @@ select * from employees where hundreds2 < 25100; -- 25%
 ```sql
 -- 10^5
 select * from employees where longitude = 150;
+select * from employees where longitude < 110;
 select * from employees where longitude < 150;
 select * from employees where longitude < 200;
-select * from employees where longitude < 250;
 select * from employees where longitude < 300;
-select * from employees where longitude < 350;
+select * from employees where longitude < 500;
 -- 10^7
 select * from employees where longitude = 5100;
+select * from employees where longitude < 1100;
 select * from employees where longitude < 5100;
 select * from employees where longitude < 10100;
-select * from employees where longitude < 15100;
 select * from employees where longitude < 20100;
-select * from employees where longitude < 25100;
+select * from employees where longitude < 40100;
 ```
 
 ##  b-tree vs hash
 
-for 
+**use memory engine**
+
+```sql
+ALTER TABLE employees ENGINE = MEMORY;
+
+```
+
+**create index**
+
+```sql
+ALTER TABLE employees ADD INDEX idx_ssnum (ssnum) USING HASH;
+ALTER TABLE employees ADD INDEX idx_hundreds2 (hundreds2) USING HASH;
+
+ALTER TABLE employees ADD INDEX idx_ssnum (ssnum) USING BTREE;
+ALTER TABLE employees ADD INDEX idx_hundreds2 (hundreds2) USING BTREE;
+
+```
+
+query
+
+```sql
+--  not sure about the columns in select and if the primary key(default as b+tree) should be kept
+--  multipoint query
+select * from employees where hundreds2 = 120;
+
+--  range
+select * from employees where hundreds2 between 100 and 200;
+```
+
+
+
+
 
 ##  Aggregate Maintenance --triggers
 
