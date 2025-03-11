@@ -980,6 +980,34 @@ select * from employees where longitude < 20100;
 select * from employees where longitude < 40100;
 ```
 
+##  index on small tables
+
+3 experiments
+
+- all update
+- 50% update + 50% point query
+- all point query
+
+the slides suggest the table with 100 rows. since our dataset every value repeats 100 times, for this table we do not use duplictaed values?
+
+are we going to limit the processing time to 10ms and calculating how many queries have been executed? or we are measuring the time of executing a fixed number of queries? how many sentences are we using for updating and point query?
+
+are we going to make them a batch of queries and execute them together? what's the batch size? all of the queries together?
+
+
+
+```sql
+-- clustered index
+UPDATE employees SET name = '{new_name}', WHERE hundreds1 = {value};
+
+-- no index, scan 
+UPDATE employees SET name = '{new_name}', WHERE longitude = {value};
+```
+
+
+
+
+
 ##  b-tree vs hash
 
 **use memory engine**
