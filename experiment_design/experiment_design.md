@@ -1159,12 +1159,6 @@ WHERE ST_Within(
 );
 ```
 
-## Inesrtion Point
-
-Look at insertion_concurrency.sh
-
-employee_index with 10^6 rows.
-
 ## Index "Face lifts"
 
 employees_index table with 10^6 rows
@@ -1181,6 +1175,12 @@ insert into employees_index values (1003505,'polo94064',97.48,84.03,4700,3987);
 See when the performance drops, perform maintenance before every performance drop
 
 Maintenance: Drop the index c and recreate it.
+
+## Insertion Point
+
+Look at insertion_concurrency.sh
+
+employee_index with 10^6 rows.
 
 ## Connection Pooling
 
