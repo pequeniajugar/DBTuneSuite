@@ -22,12 +22,6 @@ setup_index() {
     "
 }
 
-cleanup_index() {
-    /data/aa10733/mysql/bin/mysql -u "$MYSQL_USER" -p"$MYSQL_PASSWORD" -h "$MYSQL_HOST" -P "$MYSQL_PORT" "$MYSQL_DATABASE" -e "
-        ALTER TABLE employees DROP COLUMN IF EXISTS att;
-        ALTER TABLE employees DROP INDEX IF EXISTS idx_ssnum_att;
-    "
-}
 # Insert function
 perform_insert() {
     SSNUM=$1
@@ -75,5 +69,3 @@ wait
 echo "Total Execution Time: $TOTAL_EXECUTION_TIME sec" >> "$OUTPUT_FILE"
 echo "Total Response Time: $TOTAL_RESPONSE_TIME sec" >> "$OUTPUT_FILE"
 echo "Sequential Insert Completed." >> "$OUTPUT_FILE"
-
-cleanup_index
