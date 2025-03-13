@@ -1159,30 +1159,11 @@ WHERE ST_Within(
 );
 ```
 
-## Value of Serializeable
+## Inesrtion Point
 
-Look at mysql_concurrency.sh
+Look at insertion_concurrency.sh
 
-Settings
-```sql
-accounts( number, branchnum,  balance);
-create clustered index c on accounts(number);
-```
-
-Thread 1
-```mysql
-select sum(balance) from accounts;
-```
-
-Thread 2
-```mysql
-START TRANSACTION;
-UPDATE accounts a1
-JOIN accounts a2 ON a1.number = a2.number - 1
-SET a1.balance = a2.balance, a2.balance = a1.balance
-WHERE a1.number % 2 = 1;
-COMMIT;
-```
+employee_index with 10^6 rows
 
 ## Index "Face lifts"
 
