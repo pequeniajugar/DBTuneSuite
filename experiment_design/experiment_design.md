@@ -1183,3 +1183,19 @@ SET a1.balance = a2.balance, a2.balance = a1.balance
 WHERE a1.number % 2 = 1;
 COMMIT;
 ```
+
+## Index "Face lifts"
+
+employees table with 10^6 rows
+
+Settings
+```mysql
+clustered index c on employees(hundreds1) with fillfactor = 100;
+```
+
+Perform the experiment(insertion) without any Maintenance
+```mysql
+insert into employees values (1003505,'polo94064',97.48,84.03,4700.55,3987.2);
+```
+See when the performance drops, perform maintenance before every performance drop
+Maintenance: Drop the index c and recreate it.
