@@ -7,7 +7,7 @@ MYSQL_DATABASE="employees_index_smaller"
 MYSQL_HOST="localhost"
 MYSQL_PORT=3306
 TOTAL_INSERTS=100000
-MAX_THREADS=${1:-100}  # Default to 100 threads if not provided
+MAX_THREADS= 10
 
 OUTPUT_FILE="sequential_output.txt"
 echo "SEQUENTIAL INSERTION EXPERIMENT" > "$OUTPUT_FILE"
