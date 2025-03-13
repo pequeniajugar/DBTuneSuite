@@ -1163,7 +1163,7 @@ WHERE ST_Within(
 
 Look at insertion_concurrency.sh
 
-employee_index with 10^6 rows
+employee_index with 10^6 rows.
 
 ## Index "Face lifts"
 
