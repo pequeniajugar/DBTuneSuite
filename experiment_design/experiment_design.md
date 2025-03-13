@@ -1198,4 +1198,5 @@ Perform the experiment(insertion) without any Maintenance
 insert into employees values (1003505,'polo94064',97.48,84.03,4700.55,3987.2);
 ```
 See when the performance drops, perform maintenance before every performance drop
+
 Maintenance: Drop the index c and recreate it.
