@@ -1180,7 +1180,7 @@ Maintenance: Drop the index c and recreate it.
 
 employee_index with 10^6 rows.
 
-Look at insertion_concurrency.sh
+Look at insertion scripts
 
 P.S: Edit the MAX_THREADS to [20/30/40/50]
 
