@@ -1178,9 +1178,11 @@ Maintenance: Drop the index c and recreate it.
 
 ## Insertion Point
 
+employee_index with 10^6 rows.
+
 Look at insertion_concurrency.sh
 
-employee_index with 10^6 rows.
+P.S: Edit the MAX_THREADS to [20/30/40/50]
 
 ## Connection Pooling
 
