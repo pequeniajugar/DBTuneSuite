@@ -12,7 +12,7 @@ NUM_THREADS=100  # Number of simulated client threads
 RETRY_WAIT=15  # Seconds to wait before retrying if connection fails
 
 QUERY=$(cat <<EOF
-INSERT INTO test_table (value) VALUES (RAND());
+insert into employees_index values (1003505,'polo94064',97.48,84.03,4700,3987);
 EOF
 )
 
