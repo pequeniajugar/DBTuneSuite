@@ -12,6 +12,8 @@ MAX_THREADS= 10
 OUTPUT_FILE="sequential_output.txt"
 echo "SEQUENTIAL INSERTION EXPERIMENT" > "$OUTPUT_FILE"
 
+TOTAL_EXECUTION_TIME=0
+TOTAL_RESPONSE_TIME=0
 # Ensure index exists
 setup_index() {
     /data/aa10733/mysql/bin/mysql -u "$MYSQL_USER" -p"$MYSQL_PASSWORD" -h "$MYSQL_HOST" -P "$MYSQL_PORT" "$MYSQL_DATABASE" -e "
