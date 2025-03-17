@@ -1165,27 +1165,33 @@ WHERE ST_Within(
 );
 ```
 
-## Value of Serializeable
+## Index "Face lifts"
 
-Look at mysql_concurrency.sh
+employees_index table with 10^6 rows
 
 Settings
-```sql
-accounts( number, branchnum,  balance);
-create clustered index c on accounts(number);
+```mysql
+clustered index c on employees(hundreds1) with fillfactor = 100;
 ```
 
-Thread 1
+Perform the experiment(insertion) without any Maintenance
 ```mysql
-select sum(balance) from accounts;
+insert into employees_index values (1003505,'polo94064',97.48,84.03,4700,3987);
 ```
+See when the performance drops, perform maintenance before every performance drop
 
-Thread 2
-```mysql
-START TRANSACTION;
-UPDATE accounts a1
-JOIN accounts a2 ON a1.number = a2.number - 1
-SET a1.balance = a2.balance, a2.balance = a1.balance
-WHERE a1.number % 2 = 1;
-COMMIT;
-```
+Maintenance: Drop the index c and recreate it.
+
+## Insertion Point
+
+employee_index with 10^6 rows.
+
+Look at insertion scripts
+
+P.S: Edit the MAX_THREADS to [20/30/40/50]
+
+## Connection Pooling
+
+employees_index table with 10^6 rows
+
+Look at connection_pool.sh
