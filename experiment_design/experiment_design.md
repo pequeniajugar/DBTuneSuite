@@ -982,17 +982,11 @@ select * from employees where longitude < 40100;
 
 ##  index on small tables
 
-3 experiments
+generate table with 1000 rows.
 
-- all update
-- 50% update + 50% point query
-- all point query
+measuring the time of executing a fixed number of queries
 
-the slides suggest the table with 100 rows. since our dataset every value repeats 100 times, for this table we do not use duplictaed values?
-
-are we going to limit the processing time to 10ms and calculating how many queries have been executed? or we are measuring the time of executing a fixed number of queries? how many sentences are we using for updating and point query?
-
-are we going to make them a batch of queries and execute them together? what's the batch size? all of the queries together?
+using update_index.py
 
 
 
@@ -1010,21 +1004,33 @@ UPDATE employees SET name = '{new_name}', WHERE longitude = {value};
 
 ##  b-tree vs hash
 
+![image-20250209033907982](images/b+tree_hash.png)
+
+**table**
+
+employees
+
+only keep primary key(ssnum), the other index are dropped and new indexes are required.
+
+
+
 **use memory engine**
 
 ```sql
 ALTER TABLE employees ENGINE = MEMORY;
-
+--  for mysql & mariadb
 ```
 
 **create index**
 
 ```sql
-ALTER TABLE employees ADD INDEX idx_ssnum (ssnum) USING HASH;
-ALTER TABLE employees ADD INDEX idx_hundreds2 (hundreds2) USING HASH;
+CREATE INDEX idx_ssnum ON employees (ssnum) USING HASH;
+CREATE INDEX idx_hundreds1 ON employees (hundreds1) USING HASH;
+CREATE INDEX idx_longitude ON employees (longitude) USING HASH;
 
-ALTER TABLE employees ADD INDEX idx_ssnum (ssnum) USING BTREE;
-ALTER TABLE employees ADD INDEX idx_hundreds2 (hundreds2) USING BTREE;
+CREATE INDEX idx_ssnum ON employees (ssnum) USING BTREE;
+CREATE INDEX idx_hundreds1 ON employees (hundreds1) USING BTREE;
+CREATE INDEX idx_longitude ON employees (longitude) USING BTREE;
 
 ```
 
@@ -1033,10 +1039,10 @@ query
 ```sql
 --  not sure about the columns in select and if the primary key(default as b+tree) should be kept
 --  multipoint query
-select * from employees where hundreds2 = 120;
+select * from employees where hundreds1= 150
 
 --  range
-select * from employees where hundreds2 between 100 and 200;
+select * from employees where longitude between 150 and 160;
 ```
 
 
