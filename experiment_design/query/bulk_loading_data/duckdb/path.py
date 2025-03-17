@@ -3,18 +3,18 @@ import pandas as pd
 import duckdb
 from tqdm import tqdm
 
-# DuckDB 数据库路径
+# Path to the DuckDB database
 DUCKDB_DB = "/data/tw3090/duckdb/employees10_5"
 
-# 连接 DuckDB 并清空表
+# Connect to DuckDB and clear the table
 def setup_duckdb():
     conn = duckdb.connect(DUCKDB_DB)
-    conn.execute("DELETE FROM lineitem;")
+    conn.execute("DELETE FROM lineitem;")  # Clear the table
     return conn
 
-# 使用 COPY FROM 批量加载数据
+# Bulk load data using COPY FROM
 def load_data_duckdb(file_path, conn):
-    conn.execute("DELETE FROM lineitem;")  # 清空表
+    conn.execute("DELETE FROM lineitem;")  # Clear the table
 
     start_real_time = time.time()
     start_cpu_time = time.process_time()
@@ -32,7 +32,7 @@ def load_data_duckdb(file_path, conn):
 
     return response_time, execution_time
 
-# 使用 batch_size=100 进行 INSERT
+# Insert data using batch_size=100
 def batch_insert_duckdb(conn, data, batch_size=100):
     query = """INSERT INTO lineitem
                (l_orderkey, l_partkey, l_suppkey, l_linenumber,
@@ -41,10 +41,10 @@ def batch_insert_duckdb(conn, data, batch_size=100):
                 l_receiptdate, l_shipinstruct, l_shipmode, l_comment)
                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"""
 
-    # 清空表
+    # Clear the table
     conn.execute("DELETE FROM lineitem;")
 
-    # 计时
+    # Timing
     start_real_time = time.time()
     start_cpu_time = time.process_time()
 
@@ -60,13 +60,13 @@ def batch_insert_duckdb(conn, data, batch_size=100):
 
     return response_time, execution_time
 
-# 读取 .tbl 文件（假设数据以 '|' 分隔）
+# Read .tbl file (assuming data is '|' delimited)
 def read_tbl_file(file_path, columns):
     df = pd.read_csv(file_path, delimiter="|", names=columns, index_col=False)
-    df.dropna(axis=1, how='all', inplace=True)  # 移除空列（.tbl 结尾通常带 '|')
+    df.dropna(axis=1, how='all', inplace=True)  # Remove empty columns (as .tbl usually ends with '|')
     return df
 
-# 运行实验
+# Run the experiment
 def run_experiment(tbl_file):
     columns = [
         "l_orderkey", "l_partkey", "l_suppkey", "l_linenumber",
@@ -76,10 +76,10 @@ def run_experiment(tbl_file):
     ]
     data = read_tbl_file(tbl_file, columns)
 
-    # 初始化 DuckDB
+    # Initialize DuckDB
     duckdb_conn = setup_duckdb()
 
-    # **测试 10 次 COPY FROM**
+    # **Test COPY FROM 10 times**
     load_response_times = []
     load_execution_times = []
 
@@ -94,7 +94,7 @@ def run_experiment(tbl_file):
     print(f"  Response Times: {load_response_times}")
     print(f"  Execution Times: {load_execution_times}")
 
-    # **测试 10 次 batch_size = 100**
+    # **Test batch insert with batch_size = 100 (10 times)**
     batch_size = 100
     batch_response_times = []
     batch_execution_times = []
@@ -112,6 +112,6 @@ def run_experiment(tbl_file):
 
     duckdb_conn.close()
 
-# 运行实验
-tbl_file = "/data/tw3090/tpch/tpch10_5/filtered_lineitem.tbl"  # 替换为实际 .tbl 文件路径
+# Run the experiment
+tbl_file = "/data/tw3090/tpch/tpch10_5/filtered_lineitem.tbl"  # Replace with the actual .tbl file path
 run_experiment(tbl_file)
