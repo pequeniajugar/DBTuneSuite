@@ -946,7 +946,6 @@ select ssnum, hundreds2 from employees where name = 'name10';
 ```sql
 --  10^5
 select * from employees where hundreds2 = 150; -- 0%
-select * from employees where hundreds2 < 110; -- 0%
 select * from employees where hundreds2 < 150; -- 5%
 select * from employees where hundreds2 < 200; -- 10%
 select * from employees where hundreds2 < 300; -- 20%
@@ -954,7 +953,6 @@ select * from employees where hundreds2 < 500; -- 40%
 
 -- 10^7
 select * from employees where hundreds2 = 5100; -- 0%
-select * from employees where hundreds2 < 1100; -- 1%
 select * from employees where hundreds2 < 5100; -- 5%
 select * from employees where hundreds2 < 10100; -- 10%
 select * from employees where hundreds2 < 20100; -- 20%
