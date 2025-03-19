@@ -964,14 +964,12 @@ select * from employees where hundreds2 < 40100; -- 40%
 ```sql
 -- 10^5
 select * from employees where longitude = 150;
-select * from employees where longitude < 110;
 select * from employees where longitude < 150;
 select * from employees where longitude < 200;
 select * from employees where longitude < 300;
 select * from employees where longitude < 500;
 -- 10^7
 select * from employees where longitude = 5100;
-select * from employees where longitude < 1100;
 select * from employees where longitude < 5100;
 select * from employees where longitude < 10100;
 select * from employees where longitude < 20100;
