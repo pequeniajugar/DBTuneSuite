@@ -1190,4 +1190,6 @@ P.S: Edit the MAX_THREADS to [20/30/40/50]
 
 employees_index table with 10^6 rows
 
+Please change the number of threads [20/40/60/80/100/120/140]
+
 Look at connection_pool.sh
