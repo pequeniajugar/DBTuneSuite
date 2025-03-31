@@ -1167,7 +1167,7 @@ employees_index table.
 
 Settings
 ```mysql
-clustered index c on employees(hundreds1) with fillfactor = 100;
+clustered index c on employees(hundreds1) with fillfactor = 100;
 ```
 
 Perform the experiment(insertion) without any Maintenance
