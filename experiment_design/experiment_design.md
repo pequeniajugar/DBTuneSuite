@@ -1180,7 +1180,7 @@ Maintenance: Drop the index c and recreate it.
 
 ## Insertion Point
 
-employee_index with 10^6 rows.
+employees_index table.
 
 Look at insertion scripts
 
@@ -1188,7 +1188,7 @@ P.S: Edit the MAX_THREADS to [20/30/40/50]
 
 ## Connection Pooling
 
-employees_index table with 10^6 rows
+employees_index table.
 
 Please change the number of threads [20/40/60/80/100/120/140]
 
