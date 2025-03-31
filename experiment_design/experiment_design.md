@@ -1163,7 +1163,7 @@ WHERE ST_Within(
 
 ## Index "Face lifts"
 
-employees_index table with 10^6 rows
+employees_index table.
 
 Settings
 ```mysql
