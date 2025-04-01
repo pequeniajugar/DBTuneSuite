@@ -1,0 +1,186 @@
+=== Testing with BATCH_SIZE=100 ===
+Run #1 with batch size 100
+Real Time: 387.228174s
+Execution Time (CPU): 6.645509s
+Run #2 with batch size 100
+Real Time: 385.596106s
+Execution Time (CPU): 6.63845s
+Run #3 with batch size 100
+Real Time: 385.482449s
+Execution Time (CPU): 6.674325s
+Run #4 with batch size 100
+Real Time: 385.739165s
+Execution Time (CPU): 6.675134s
+Run #5 with batch size 100
+Real Time: 386.234377s
+Execution Time (CPU): 6.679238s
+Run #6 with batch size 100
+Real Time: 387.431404s
+Execution Time (CPU): 6.659358s
+Run #7 with batch size 100
+Real Time: 388.976208s
+Execution Time (CPU): 6.684201s
+Run #8 with batch size 100
+Real Time: 391.101804s
+Execution Time (CPU): 6.662799s
+Run #9 with batch size 100
+Real Time: 392.947613s
+Execution Time (CPU): 6.681453s
+Run #10 with batch size 100
+Real Time: 393.336774s
+Execution Time (CPU): 6.689729s
+=== Testing with BATCH_SIZE=20000 ===
+Run #1 with batch size 20000
+Real Time: 5.006507s
+Execution Time (CPU): 0.040543s
+Run #2 with batch size 20000
+Real Time: 5.142141s
+Execution Time (CPU): 0.039635s
+Run #3 with batch size 20000
+Real Time: 5.408089s
+Execution Time (CPU): 0.038449s
+Run #4 with batch size 20000
+Real Time: 5.123129s
+Execution Time (CPU): 0.039417s
+Run #5 with batch size 20000
+Real Time: 5.174383s
+Execution Time (CPU): 0.039624s
+Run #6 with batch size 20000
+Real Time: 4.880582s
+Execution Time (CPU): 0.040056s
+Run #7 with batch size 20000
+Real Time: 5.012433s
+Execution Time (CPU): 0.039606s
+Run #8 with batch size 20000
+Real Time: 5.237386s
+Execution Time (CPU): 0.04012s
+Run #9 with batch size 20000
+Real Time: 4.844072s
+Execution Time (CPU): 0.039451s
+Run #10 with batch size 20000
+Real Time: 4.856972s
+Execution Time (CPU): 0.039406s
+=== Testing with BATCH_SIZE=40000 ===
+Run #1 with batch size 40000
+Real Time: 3.86863s
+Execution Time (CPU): 0.023369s
+Run #2 with batch size 40000
+Real Time: 4.010189s
+Execution Time (CPU): 0.023013s
+Run #3 with batch size 40000
+Real Time: 3.867824s
+Execution Time (CPU): 0.023085s
+Run #4 with batch size 40000
+Real Time: 3.931266s
+Execution Time (CPU): 0.022793s
+Run #5 with batch size 40000
+Real Time: 3.910515s
+Execution Time (CPU): 0.022702s
+Run #6 with batch size 40000
+Real Time: 4.078995s
+Execution Time (CPU): 0.023238s
+Run #7 with batch size 40000
+Real Time: 3.946584s
+Execution Time (CPU): 0.022703s
+Run #8 with batch size 40000
+Real Time: 3.956516s
+Execution Time (CPU): 0.02305s
+Run #9 with batch size 40000
+Real Time: 4.120886s
+Execution Time (CPU): 0.023123s
+Run #10 with batch size 40000
+Real Time: 3.753604s
+Execution Time (CPU): 0.023067s
+=== Testing with BATCH_SIZE=60000 ===
+Run #1 with batch size 60000
+Real Time: 3.583192s
+Execution Time (CPU): 0.01759s
+Run #2 with batch size 60000
+Real Time: 3.568023s
+Execution Time (CPU): 0.017229s
+Run #3 with batch size 60000
+Real Time: 3.62476s
+Execution Time (CPU): 0.017265s
+Run #4 with batch size 60000
+Real Time: 3.638141s
+Execution Time (CPU): 0.017083s
+Run #5 with batch size 60000
+Real Time: 3.52397s
+Execution Time (CPU): 0.01759s
+Run #6 with batch size 60000
+Real Time: 3.656553s
+Execution Time (CPU): 0.017618s
+Run #7 with batch size 60000
+Real Time: 3.674556s
+Execution Time (CPU): 0.017779s
+Run #8 with batch size 60000
+Real Time: 3.574286s
+Execution Time (CPU): 0.017455s
+Run #9 with batch size 60000
+Real Time: 3.516635s
+Execution Time (CPU): 0.017584s
+Run #10 with batch size 60000
+Real Time: 3.511323s
+Execution Time (CPU): 0.017799s
+=== Testing with BATCH_SIZE=80000 ===
+Run #1 with batch size 80000
+Real Time: 3.215609s
+Execution Time (CPU): 0.012126s
+Run #2 with batch size 80000
+Real Time: 3.178581s
+Execution Time (CPU): 0.012311s
+Run #3 with batch size 80000
+Real Time: 3.280775s
+Execution Time (CPU): 0.011059s
+Run #4 with batch size 80000
+Real Time: 3.144995s
+Execution Time (CPU): 0.01148s
+Run #5 with batch size 80000
+Real Time: 3.195982s
+Execution Time (CPU): 0.011969s
+Run #6 with batch size 80000
+Real Time: 3.187419s
+Execution Time (CPU): 0.011997s
+Run #7 with batch size 80000
+Real Time: 3.270193s
+Execution Time (CPU): 0.011261s
+Run #8 with batch size 80000
+Real Time: 3.215831s
+Execution Time (CPU): 0.011506s
+Run #9 with batch size 80000
+Real Time: 3.27915s
+Execution Time (CPU): 0.011907s
+Run #10 with batch size 80000
+Real Time: 3.39825s
+Execution Time (CPU): 0.012167s
+=== Testing with BATCH_SIZE=100000 ===
+Run #1 with batch size 100000
+Real Time: 3.293377s
+Execution Time (CPU): 0.012139s
+Run #2 with batch size 100000
+Real Time: 3.177455s
+Execution Time (CPU): 0.011924s
+Run #3 with batch size 100000
+Real Time: 3.201808s
+Execution Time (CPU): 0.011585s
+Run #4 with batch size 100000
+Real Time: 3.207431s
+Execution Time (CPU): 0.011838s
+Run #5 with batch size 100000
+Real Time: 3.277179s
+Execution Time (CPU): 0.012168s
+Run #6 with batch size 100000
+Real Time: 3.110987s
+Execution Time (CPU): 0.011849s
+Run #7 with batch size 100000
+Real Time: 3.2687s
+Execution Time (CPU): 0.011632s
+Run #8 with batch size 100000
+Real Time: 3.253871s
+Execution Time (CPU): 0.011786s
+Run #9 with batch size 100000
+Real Time: 3.273396s
+Execution Time (CPU): 0.011486s
+Run #10 with batch size 100000
+Real Time: 3.162317s
+Execution Time (CPU): 0.011171s
