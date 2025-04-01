@@ -857,13 +857,30 @@ use TPC_H dataset
 
 ![image-20250209033907981](images/bulk_loading_query.png)
 
-use .py files to implement insert
+**subexperiments:**
+
+1. insert and commit 1 by 1
+2. conventional bulk load (with several files of size 100)
+3. load with direct path
+
+use ./experiment_design/bulk_loading_data/path.py file to get the results of part1 and 3
+
+use ./experiment_design/bulk_loading_data/batch.py file to get the results of part2
 
 ###  batch size
 
-![image-20250225224112946](C:\Users\王天欣\AppData\Roaming\Typora\typora-user-images\image-20250225224112946.png)
+![image-20250209033907981](images/loadbatch.png)
 
-use .py files to implement insert
+**subexperiments:**
+
+1. insert and commit 1 by 1
+2. load with several files of size 100/ 1000/ 10000/ 50000/ 100000
+
+use ./experiment_design/bulk_loading_data/path.py file to get the results of part1
+
+use ./experiment_design/bulk_loading_data/batch.py file to get the results of part2
+
+
 
 ##  clustered index
 
@@ -940,42 +957,74 @@ select ssnum, hundreds2 from employees where name = 'name10';
 
 ![image-20250209033907982](images/scan_win.png)
 
+**comparison groups**
+
 1. index (hundreds2)
 2. no index(longitude)
 
-```sql
+**sub experiments** for each dataset&index situation:
+
+- multipoint query
+
+- multipoint query for access ratio 1%
+
+- range query for access ratio 1%, 5%, 10%, 20%, 40%
+
+  
+
+**for index (hundreds2)**
+
 --  10^5
-select * from employees where hundreds2 = 150; -- 0%
+
+```sql
+select * from employees where hundreds2 = 150; -- multipoint query
+```
+
+```bash
+ # in bash file
+ LONGITUDE_VALUES=$(seq 100 110 | paste -sd,)
+    QUERY=$(cat <<EOF
+select * from employees where hundreds2 in ($LONGITUDE_VALUES);
+EOF
+) #multipoint query for 1%
+```
+
+```sql
 select * from employees where hundreds2 < 110; -- 1%
 select * from employees where hundreds2 < 150; -- 5%
 select * from employees where hundreds2 < 200; -- 10%
 select * from employees where hundreds2 < 300; -- 20%
 select * from employees where hundreds2 < 500; -- 40%
+```
 
--- 10^7
-select * from employees where hundreds2 = 5100; -- 0%
+--  10^7
+
+```sql
+select * from employees where hundreds2 = 5100; -- multipoint query
+```
+
+```bash
+ # in bash file
+ LONGITUDE_VALUES=$(seq 100 1100 | paste -sd,)
+    QUERY=$(cat <<EOF
+select * from employees where hundreds2 in ($LONGITUDE_VALUES);
+EOF
+) #multipoint query for 1%
+```
+
+```sql
+select * from employees where hundreds2 < 1100; -- 1%
 select * from employees where hundreds2 < 5100; -- 5%
 select * from employees where hundreds2 < 10100; -- 10%
 select * from employees where hundreds2 < 20100; -- 20%
 select * from employees where hundreds2 < 40100; -- 40%
-
-
 ```
 
-```sql
--- 10^5
-select * from employees where longitude = 150;
-select * from employees where longitude < 150;
-select * from employees where longitude < 200;
-select * from employees where longitude < 300;
-select * from employees where longitude < 500;
--- 10^7
-select * from employees where longitude = 5100;
-select * from employees where longitude < 5100;
-select * from employees where longitude < 10100;
-select * from employees where longitude < 20100;
-select * from employees where longitude < 40100;
-```
+**for no index(longitude)**
+
+change all the *hundreds* column in the codes into *longitude*
+
+
 
 ##  index on small tables
 
