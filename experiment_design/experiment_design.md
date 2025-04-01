@@ -727,7 +727,7 @@ Use employee dataset
 
 ```sql
 CREATE TABLE employees (
-    ssnum INT primary key,
+    ssnum INT,
     name VARCHAR(255),
     lat INT,
     longitude INT,  -- change long → longitude
@@ -946,7 +946,7 @@ select ssnum, hundreds2 from employees where name = 'name10';
 ```sql
 --  10^5
 select * from employees where hundreds2 = 150; -- 0%
-select * from employees where hundreds2 < 110; -- 0%
+select * from employees where hundreds2 < 110; -- 1%
 select * from employees where hundreds2 < 150; -- 5%
 select * from employees where hundreds2 < 200; -- 10%
 select * from employees where hundreds2 < 300; -- 20%
@@ -983,6 +983,8 @@ select * from employees where longitude < 40100;
 ##  index on small tables
 
 generate table with 1000 rows.
+
+100 update each process
 
 measuring the time of executing a fixed number of queries
 
