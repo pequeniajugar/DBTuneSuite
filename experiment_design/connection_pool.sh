@@ -6,21 +6,23 @@ MYSQL_PASSWORD="pwd"
 MYSQL_DATABASE="experiment_db"
 MYSQL_HOST="localhost"
 MYSQL_PORT=3306
-POOL_SIZE=10  # Adjust pool size for pooling mode
+POOL_SIZE=100
 MAX_CONNECTIONS=60
-NUM_THREADS=100  # Number of simulated client threads
+NUM_THREADS=20  # Number of simulated client threads [20/40/60/80/100/120/140]
 RETRY_WAIT=15  # Seconds to wait before retrying if connection fails
-
-QUERY=$(cat <<EOF
-insert into employees_index values (1003505,'polo94064',97.48,84.03,4700,3987);
-EOF
-)
 
 # Function to perform inserts with retry logic
 run_experiment() {
     local mode=$1
     local thread_id=$2
     local attempt=0
+    SSNUM=$3
+    QUERY="INSERT INTO employees (ssnum, name, lat, long, hundreds1, hundreds2) VALUES 
+        ($SSNUM, 'Employee_$SSNUM', $((RANDOM)), $((RANDOM)), $((RANDOM % 100)), $((RANDOM % 100))), 
+        ($((SSNUM+1)), 'Employee_$((SSNUM+1))', $((RANDOM)), $((RANDOM)), $((RANDOM % 100)), $((RANDOM % 100))), 
+        ($((SSNUM+2)), 'Employee_$((SSNUM+2))', $((RANDOM)), $((RANDOM)), $((RANDOM % 100)), $((RANDOM % 100))), 
+        ($((SSNUM+3)), 'Employee_$((SSNUM+3))', $((RANDOM)), $((RANDOM)), $((RANDOM % 100)), $((RANDOM % 100))), 
+        ($((SSNUM+4)), 'Employee_$((SSNUM+4))', $((RANDOM)), $((RANDOM)), $((RANDOM % 100)), $((RANDOM % 100)));"
 
     if [ "$mode" == "pool" ]; then
         CONNECTION_OPTION="--pooling=1 --pool-size=$POOL_SIZE"
@@ -73,6 +75,7 @@ for mode in "simple" "pool"; do
     echo "Starting experiment in ${mode} mode..."
     
     active_connections=0
+    i=0
 
     thread_id=1
     while [ $thread_id -le $NUM_THREADS ]; do
@@ -82,7 +85,8 @@ for mode in "simple" "pool"; do
             active_connections=0
         fi
         
-        run_experiment "$mode" "$thread_id" &  # Run in background
+        run_experiment "$mode" "$thread_id" "$i" &  # Run in background
+        i=$((i + 5))
         ((active_connections++))
         ((thread_id++))
     done

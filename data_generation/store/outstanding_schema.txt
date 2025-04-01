@@ -87,7 +87,7 @@ storeOutstanding( storeid, amount);
 	storeid: int	1...n			primary key
 	amount: decimal.2	(9000, 10000) 
 
-CREATE TABLE item (
+CREATE TABLE storeOutstanding (
     storeid INT,
     amount DECIMAL(10,2)
 );

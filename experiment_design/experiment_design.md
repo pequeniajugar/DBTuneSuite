@@ -954,7 +954,6 @@ select * from employees where hundreds2 < 500; -- 40%
 
 -- 10^7
 select * from employees where hundreds2 = 5100; -- 0%
-select * from employees where hundreds2 < 1100; -- 1%
 select * from employees where hundreds2 < 5100; -- 5%
 select * from employees where hundreds2 < 10100; -- 10%
 select * from employees where hundreds2 < 20100; -- 20%
@@ -966,14 +965,12 @@ select * from employees where hundreds2 < 40100; -- 40%
 ```sql
 -- 10^5
 select * from employees where longitude = 150;
-select * from employees where longitude < 110;
 select * from employees where longitude < 150;
 select * from employees where longitude < 200;
 select * from employees where longitude < 300;
 select * from employees where longitude < 500;
 -- 10^7
 select * from employees where longitude = 5100;
-select * from employees where longitude < 1100;
 select * from employees where longitude < 5100;
 select * from employees where longitude < 10100;
 select * from employees where longitude < 20100;
@@ -1169,11 +1166,11 @@ WHERE ST_Within(
 
 ## Index "Face lifts"
 
-employees_index table with 10^6 rows
+employees_index table.
 
 Settings
 ```mysql
-clustered index c on employees(hundreds1) with fillfactor = 100;
+clustered index c on employees(hundreds1) with fillfactor = 100;
 ```
 
 Perform the experiment(insertion) without any Maintenance
@@ -1186,7 +1183,7 @@ Maintenance: Drop the index c and recreate it.
 
 ## Insertion Point
 
-employee_index with 10^6 rows.
+employees_index table.
 
 Look at insertion scripts
 
@@ -1194,6 +1191,8 @@ P.S: Edit the MAX_THREADS to [20/30/40/50]
 
 ## Connection Pooling
 
-employees_index table with 10^6 rows
+employees_index table.
+
+Please change the number of threads [20/40/60/80/100/120/140]
 
 Look at connection_pool.sh

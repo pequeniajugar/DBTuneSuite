@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bas
 TIMEFORMAT='%R %U %S'
 
 MYSQL_USER="root"
@@ -7,18 +7,16 @@ MYSQL_DATABASE="employees_index_smaller"
 MYSQL_HOST="localhost"
 MYSQL_PORT=3306
 TOTAL_INSERTS=100000
-MAX_THREADS= 10
+MAX_THREADS=50
 
-OUTPUT_FILE="sequential_output.txt"
-echo "SEQUENTIAL INSERTION EXPERIMENT" > "$OUTPUT_FILE"
+echo "SEQUENTIAL INSERTION EXPERIMENT" >> "sequential_output.txt"
 
-TOTAL_EXECUTION_TIME=0
-TOTAL_RESPONSE_TIME=0
-# Ensure index exists
+TOTAL_EXECUTION_TIME=0.0
+TOTAL_RESPONSE_TIME=0.0
+
 setup_index() {
     /data/aa10733/mysql/bin/mysql -u "$MYSQL_USER" -p"$MYSQL_PASSWORD" -h "$MYSQL_HOST" -P "$MYSQL_PORT" "$MYSQL_DATABASE" -e "
-        ALTER TABLE employees DROP INDEX IF EXISTS idx_ssnum;
-        CREATE CLUSTERED INDEX idx_ssnum ON employees(ssnum);
+        CREATE INDEX idx_ssnum ON employees(ssnum);
     "
 }
 
@@ -40,7 +38,7 @@ perform_insert() {
             exit 1
         fi
 
-        read REAL_TIME USER_TIME SYS_TIME <<< "$TIME_LINE"
+	read REAL_TIME USER_TIME SYS_TIME <<< "$TIME_LINE"
 
         REAL_TIME=$(printf "%.6f" "$REAL_TIME")
         USER_TIME=$(printf "%.6f" "$USER_TIME")
@@ -52,13 +50,15 @@ perform_insert() {
         TOTAL_EXECUTION_TIME=$(echo "$TOTAL_EXECUTION_TIME + $EXECUTION_TIME" | bc)
         TOTAL_RESPONSE_TIME=$(echo "$TOTAL_RESPONSE_TIME + $REAL_TIME" | bc)
 
-        echo "[Thread $SSNUM] ${EXECUTION_TIME} sec execution | ${REAL_TIME} sec response"
+        if [ $(("$SSNUM" % 1000)) -eq 0 ]; then echo "$SSNUM inserts done"; fi
+
     fi
 }
 
 setup_index
 
 # Run inserts in sorted order
+echo "Running inserts"
 for ((i=1; i<=TOTAL_INSERTS; i++)); do
     ((thread=i%MAX_THREADS))
     perform_insert "$i" &
@@ -66,6 +66,6 @@ for ((i=1; i<=TOTAL_INSERTS; i++)); do
 done
 
 wait
-echo "Total Execution Time: $TOTAL_EXECUTION_TIME sec" >> "$OUTPUT_FILE"
-echo "Total Response Time: $TOTAL_RESPONSE_TIME sec" >> "$OUTPUT_FILE"
-echo "Sequential Insert Completed." >> "$OUTPUT_FILE"
+echo "Total Execution Time: $TOTAL_EXECUTION_TIME sec" >> "sequential_output.txt"
+echo "Total Response Time: $TOTAL_RESPONSE_TIME sec" >> "sequential_output.txt"
+echo "Sequential Insert Completed." >> "sequential_output.txt"
