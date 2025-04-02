@@ -8,6 +8,7 @@ MYSQL_HOST="localhost"
 MYSQL_PORT=3306
 TOTAL_INSERTS=100000
 MAX_THREADS=50
+ORIG_LEN=100000 #records in employees_index_smaller orignally
 
 echo "SEQUENTIAL INSERTION EXPERIMENT" >> "sequential_output.txt"
 
@@ -59,7 +60,7 @@ setup_index
 
 # Run inserts in sorted order
 echo "Running inserts"
-for ((i=1; i<=TOTAL_INSERTS; i++)); do
+for ((i=ORIG_LEN; i<=ORIG_LEN+TOTAL_INSERTS; i++)); do
     ((thread=i%MAX_THREADS))
     perform_insert "$i" &
     if [ "$thread" -eq 0 ]; then wait; fi
