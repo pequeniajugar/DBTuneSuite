@@ -1087,10 +1087,13 @@ query
 ```sql
 --  not sure about the columns in select and if the primary key(default as b+tree) should be kept
 --  multipoint query
-select * from employees where hundreds1= 150
+select * from employees where hundreds1= 150;
 
 --  range
 select * from employees where longitude between 150 and 160;
+
+-- point query
+select * from employees where ssnum = 150;
 ```
 
 
