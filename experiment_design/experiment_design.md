@@ -1068,7 +1068,10 @@ only keep primary key(ssnum), the other index are dropped and new indexes are re
 ALTER TABLE employees ENGINE = MEMORY;
 --  for mysql & mariadb
 ```
-
+```sql
+SET GLOBAL max_heap_table_size = 10737418240;
+SET GLOBAL tmp_table_size = 10737418240;
+```
 **create index**
 
 ```sql
