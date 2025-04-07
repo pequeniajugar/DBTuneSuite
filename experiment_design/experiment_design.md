@@ -1109,6 +1109,10 @@ store dataset (only uniform dataset)
 
 Setting:
 ```sql
+//Change the data type of these 2 columns in store dataset
+ALTER TABLE orders MODIFY COLUMN storeid VARCHAR(20);
+ALTER TABLE orders MODIFY COLUMN vendorid VARCHAR(20);
+
 create clustered index i_item on item(itemnum);
 
 DELIMITER $$
