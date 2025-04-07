@@ -1111,23 +1111,40 @@ Setting:
 ```sql
 create clustered index i_item on item(itemnum);
 
-create trigger updateVendorOutstanding on orders for insert as
-update vendorOutstanding
-set amount = 
-	(select vendorOutstanding.amount+sum(inserted.quantity*item.price)
-	from inserted,item
-	where inserted.itemnum = item.itemnum
-	)
-where vendorid = (select vendorid from inserted) ;
+DELIMITER $$
 
-create trigger updateStoreOutstanding on orders for insert as
-update storeOutstanding
-set amount = 
-	(select storeOutstanding.amount+sum(inserted.quantity*item.price)
-	 from inserted,item
-	 where inserted.itemnum = item.itemnum
-	)
-where storeid = (select storeid from inserted)
+CREATE TRIGGER updateVendorOutstanding
+AFTER INSERT ON orders
+FOR EACH ROW
+BEGIN
+    UPDATE vendorOutstanding
+    SET amount = amount + (NEW.quantity * (
+        SELECT price
+        FROM item
+        WHERE item.itemnum = NEW.itemnum
+    ))
+    WHERE vendorid = NEW.vendorid;
+END $$
+
+DELIMITER ;
+
+
+DELIMITER $$
+
+CREATE TRIGGER updateStoreOutstanding
+AFTER INSERT ON orders
+FOR EACH ROW
+BEGIN
+    UPDATE storeOutstanding
+    SET amount = amount + (NEW.quantity * (
+        SELECT price
+        FROM item
+        WHERE item.itemnum = NEW.itemnum
+    ))
+    WHERE storeid = NEW.storeid;
+END $$
+
+DELIMITER ;
 ```
 
 Insert
