@@ -1161,7 +1161,7 @@ insert into orders values (1000350,7825,562,'xxxxxx6944','vendor4');
 
 Without redundant tables
 ```sql
-select orders.vendor, sum(orders.quantity*item.price)
+select orders.vendorid, sum(orders.quantity*item.price)
 		from orders,item
 		where orders.itemnum = item.itemnum
 		group by orders.vendorid;
