@@ -1170,7 +1170,6 @@ select orders.vendorid, sum(orders.quantity*item.price)
 select store.storeid, sum(orders.quantity*item.price)
 		from orders,item, store
 		where orders.itemnum = item.itemnum
-  		  and orders.storename = store.name
 		group by store.storeid;
 ```
 
