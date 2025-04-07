@@ -1168,9 +1168,10 @@ select orders.vendorid, sum(orders.quantity*item.price)
 ```
 ```sql
 select store.storeid, sum(orders.quantity*item.price)
-		from orders,item, store
-		where orders.itemnum = item.itemnum
-		group by store.storeid;
+                from orders,item, store
+                where orders.itemnum = item.itemnum
+                  and orders.storeid = store.storeid
+                group by store.storeid;
 ```
 
 With redundant tables
