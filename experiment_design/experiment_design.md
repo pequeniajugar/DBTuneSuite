@@ -1154,10 +1154,7 @@ END $$
 DELIMITER ;
 ```
 
-Insert
-```sql
-insert into orders values (1000350,7825,562,'xxxxxx6944','vendor4');
-```
+Get insert statements from data_generation/triggers_inserts.py [do row by row insert]
 
 Without redundant tables
 ```sql
