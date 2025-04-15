@@ -29,26 +29,26 @@ orders(ordernum, itemnum,  quantity, storeid, vendorid);
 	ordernum: int	1...n		primary key
 	itemnum: int	(1, n / 2.5)
 	quantity: int	(1, 100)
-	storeid:  int	 (1, n // 100)
-	vendorid: int	 (1...n+1)
+	storeid:  text	 (1, n // 100)
+	vendorid: text	 (1...n+1)
 
 CREATE TABLE orders (
     ordernum INT,
     itemnum INT,          
     quantity INT, 
-    storeid INT,   
-    vendorid INT       
+    storeid VARCHAR(20),   
+    vendorid VARCHAR(20)       
 );
 
 
 table2:
 n = input size // 100
 store( storeid, name );
-	storeid: int	1...n		primary key
+	storeid: text	1...n		primary key
 	name: text	Store1...Storen 
 
 CREATE TABLE store (
-    storeid INT,
+    storeid VARCHAR(20),
     name VARCHAR(25)
 );
 
@@ -72,11 +72,11 @@ fractal: inputsize = 10^4, n = 8002
 	     inputsize = 10^6, n = 800001
 	     inputsize = 10^8, n = 800003
 vendorOutstanding( vendorid, amount); 
-	vendorid: int	1...n			primary key
+	vendorid: text	1...n			primary key
 	amount: decimal.2	(99000, 100000) 
 
 CREATE TABLE vendorOutstanding(
-    vendorid INT,
+    vendorid VARCHAR(20),
     amount DECIMAL(10,2)
 );
 
@@ -84,10 +84,10 @@ CREATE TABLE vendorOutstanding(
 table5:
 n = input size / 5
 storeOutstanding( storeid, amount);
-	storeid: int	1...n			primary key
+	storeid: text	1...n			primary key
 	amount: decimal.2	(9000, 10000) 
 
 CREATE TABLE storeOutstanding (
-    storeid INT,
+    storeid VARCHAR(20),
     amount DECIMAL(10,2)
 );
