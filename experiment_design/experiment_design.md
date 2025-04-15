@@ -1219,7 +1219,7 @@ CREATE INDEX b2_spatialfacts ON spatial_facts(a3, a7);
 
 Point Query
 ```sql
-select count(*) from fact where a3 = 694014 and a7 = 928878;
+select count(*) from spatial_facts where a3 = 694014 and a7 = 928878;
 
 SELECT COUNT(*)
 FROM spatial_facts
