@@ -1205,8 +1205,9 @@ the codes above seems,using spatial_without10_5.csv, it's a dataset without colu
 the spatial_with10_5.csv is a dataset with column geom_a3_a7.
 
 
-
-
+Note:
+Postgresql only supports POSTGIS spatial index, and I am not allowed to install it in the server due to permission error.
+Did Postgresql query using POINT instead of GEOMETRY.
 
 Creating Index
 
