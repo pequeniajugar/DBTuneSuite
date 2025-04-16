@@ -8,7 +8,7 @@ employees(ssnum, name, lat, long, hundreds1,hundreds2);
 	ssnum: int	1... n		primary key
 	name: text	Employee1...Employeen
 	lat: demical.2		(-90, 90)
-	long: demical.2	(-180, 180)
+	longitude: demical.2	(-180, 180)
 	hundreds1: int	(100, 1000)
 	hundreds2: int	(100, 1000)
 
@@ -17,7 +17,7 @@ CREATE TABLE employees (
     ssnum INT,
     name VARCHAR(255),    
     lat DECIMAL(10,2),
-    long DECIMAL(10,2), 
+    longitude DECIMAL(10,2), 
     hundreds1 INT,
     hundreds2 INT);
 
