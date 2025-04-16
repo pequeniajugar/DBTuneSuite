@@ -1028,13 +1028,9 @@ change all the *hundreds* column in the codes into *longitude*
 
 ##  index on small tables
 
-generate table with 1000 rows.
+create a small table with 1000 rows using data from data_generation/employees/employees_smalltable.py
 
-100 update each process
-
-measuring the time of executing a fixed number of queries
-
-using update_index.py
+Using update_index.py for 100 update each process, measuring the time of executing a fixed number of queries
 
 
 
@@ -1243,7 +1239,12 @@ WHERE ST_Within(
 
 ## Index "Face lifts"
 
-employees_index table.
+employees_index table. 10^5 and 10^6
+
+the insertion data generated from /data_generation/employees/employees_facelifts.py
+
+the size of insertion data is the same as the table size
+
 
 Settings
 ```mysql
@@ -1251,12 +1252,16 @@ clustered index c on employees(hundreds1) with fillfactor = 100;
 ```
 
 Perform the experiment(insertion) without any Maintenance
+
+use /experiment_design/face_lifts/without_face_lifts.py, collect time every 10% insertion data
+
 ```mysql
 insert into employees_index values (1003505,'polo94064',97.48,84.03,4700,3987);
 ```
 See when the performance drops, perform maintenance before every performance drop
 
 Maintenance: Drop the index c and recreate it.
+
 
 ## Insertion Point
 
