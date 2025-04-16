@@ -35,7 +35,7 @@ def insert_and_track(file_path, conn, total_rows):
         ) VALUES (%s, %s, %s, %s, %s, %s)
     """
 
-    checkpoints = [int(total_rows * p) for p in [0.01, 0.2, 0.4, 0.6, 0.8, 1.0]]
+    checkpoints = [int(total_rows * p) for p in [0.01, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0]]
     checkpoint_set = set(checkpoints)
     checkpoint_times = []
 
