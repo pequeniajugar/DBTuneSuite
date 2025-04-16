@@ -1030,7 +1030,7 @@ change all the *hundreds* column in the codes into *longitude*
 
 create a small table with 1000 rows using data from data_generation/employees/employees_smalltable.py
 
-Using update_index.py for 100 update each process, measuring the time of executing a fixed number of queries
+Using experiment_design/small_table/small.py for 100 update each process, measuring the time of executing a fixed number of queries
 
 
 
