@@ -1255,13 +1255,11 @@ Perform the experiment(insertion) without any Maintenance
 
 use /experiment_design/query/face_lifts/without_face_lifts.py, collect time every 10% insertion data
 
-```mysql
-insert into employees_index values (1003505,'polo94064',97.48,84.03,4700,3987);
-```
 See when the performance drops, perform maintenance before every performance drop
 
 Maintenance: Drop the index c and recreate it.
 
+NOTE: fillfactor not supported by MySQL
 
 ## Insertion Point
 
