@@ -77,8 +77,8 @@ def insert_and_track(file_path, conn, total_rows):
                 print(f">>> {row_count} rows inserted: Real={now_real - start_real:.3f}s, "
                       f"CPU={now_cpu - start_cpu:.3f}s, Throughput={throughput:.3f} rows/sec")
                 maintain()
-                last_real = now_real
-                last_cpu = now_cpu
+                last_real = time.time()
+                last_cpu = time.process_time()
                 last_row = row_count
 
     return checkpoint_times
