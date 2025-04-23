@@ -23,6 +23,10 @@ def maintain():
     cursor = conn.cursor()
     cursor.execute("DROP INDEX c on employees;")#change to 1_000_000 when doing 10^6
     conn.commit()
+    cursor.execute("DELETE FROM employees;")#change to 1_000_000 when doing 10^6
+    conn.commit()
+    cursor.execute("LOAD DATA LOCAL INFILE '/data/aa10733/database1/employeesindex_10_5.csv' INTO TABLE employees FIELDS TERMINATED BY ',' LINES TERMINATED BY '\n' IGNORE 1 LINES (ssnum, name, lat, longitude, hundreds1, hundreds2);") #change 
+    conn.commit()
     cursor.execute("CREATE CLUSTERED INDEX c on employees WITH FILLFACTOR=100;")#change to 1_000_000 when doing 10^6
     conn.commit()
     conn.close()
@@ -33,6 +37,7 @@ def clear_table():
     cursor.execute("DELETE FROM employees WHERE ssnum > 100000;")#change to 1_000_000 when doing 10^6
     conn.commit()
     conn.close()
+    maintain()
 
 # === Step: Insert rows one-by-one and record timing at checkpoints ===
 def insert_and_track(file_path, conn, total_rows):
