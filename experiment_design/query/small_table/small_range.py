@@ -57,7 +57,7 @@ def update_task(process_id, use_index, updates, result_queue):
 
     for new_name, value in updates:
         try:
-            cursor.execute(sql_template, (new_name, value))
+            cursor.execute(sql_template, (value))
             conn.commit()
             updates_count += 1
         except pymysql.MySQLError as e:
