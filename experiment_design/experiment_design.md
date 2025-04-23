@@ -1030,7 +1030,10 @@ change all the *hundreds* column in the codes into *longitude*
 
 create a small table with 1000 rows using data from data_generation/employees/employees_smalltable.py
 
-Using experiment_design/small_table/small.py for 100 update each process, measuring the time of executing a fixed number of queries
+Updates
+
+
+Using experiment_design/query/small_table/small_updates.py for 100 update each process, measuring the time of executing a fixed number of queries
 
 
 
@@ -1042,6 +1045,21 @@ UPDATE employees SET name = '{new_name}', WHERE hundreds1 = {value};
 UPDATE employees SET name = '{new_name}', WHERE longitude = {value};
 ```
 
+
+Range
+
+
+Using experiment_design/query/small_table/small_range.py for 100 update each process, measuring the time of executing a fixed number of queries
+
+
+
+```sql
+-- clustered index
+SELECt COUNT(*) FROM employees WHERE hundreds1 = {value};
+
+-- no index, scan 
+SELECT COUNT(*) FROM employees WHERE longitude = {value};
+```
 
 
 
