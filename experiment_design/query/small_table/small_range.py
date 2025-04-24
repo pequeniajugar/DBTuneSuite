@@ -48,16 +48,16 @@ def update_task(process_id, use_index, updates, result_queue):
 
     updates_count = 0
     sql_template = (
-        "SELECT COUNT(*) employees WHERE hundreds1 = %s"
+        "SELECT COUNT(*) FROM employees WHERE hundreds1 = %s"
         if use_index else
-        "SELECT COUNT(*) employees WHERE longitude = %s"
+        "SELECT COUNT(*) FROM employees WHERE longitude = %s"
     )
 
     start_cpu = time.process_time()
 
     for new_name, value in updates:
         try:
-            cursor.execute(sql_template, (value))
+            cursor.execute(sql_template, (value,))
             conn.commit()
             updates_count += 1
         except pymysql.MySQLError as e:
