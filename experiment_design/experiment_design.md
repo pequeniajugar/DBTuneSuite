@@ -1291,6 +1291,10 @@ P.S: Edit the MAX_THREADS to [20/30/40/50]
 
 employees_index table.
 
-Please change the number of threads [20/40/60/80/100/120/140]
+Please change the number of threads [10/100/500]
 
-Look at connection_pool.sh
+For each experiment, set [MAX_CONN = POOL_SIZE = 25], [MAX_CONN = POOL_SIZE = 50], [MAX_CONN = POOL_SIZE = 100]
+
+Remember to set the max_connection of the db back or shut down and restart the db sevice after all of the connection pooling experiemnts.
+
+Look at experiment_design/queries/connection_pooling/simple.py and experiment_design/queries/connection_pooling/pool.py
