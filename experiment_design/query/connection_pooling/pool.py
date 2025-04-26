@@ -35,7 +35,7 @@ def get_max_ssnum(conn):
     return result.scalar()
 
 def delete_new_rows(conn, max_ssnum):
-    conn.execute(text("DELETE FROM employees WHERE ssnum > 100_000"))
+    conn.execute(text("DELETE FROM employees WHERE ssnum > 100000"))
     conn.commit()
 
 def count_employees(conn):
