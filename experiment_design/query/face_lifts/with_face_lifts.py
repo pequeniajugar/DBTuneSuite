@@ -18,16 +18,48 @@ MARIADB_CONFIG = {
 MODIFIED_FILE = "/data/tw3090/employee/employees_facelifts_10_5.csv"  # see data_generation/employees/employees_face_lifts.py
 COLUMN_COUNT = 6  # Number of columns in the 'employees' table
 
-def maintain():
+import mysql.connector
+
+def maintain(file_path, row_count):
     conn = mysql.connector.connect(**MARIADB_CONFIG)
     cursor = conn.cursor()
-    cursor.execute("DROP INDEX c on employees;")#change to 1_000_000 when doing 10^6
+    cursor.execute("DROP TABLE IF EXISTS employees;")
     conn.commit()
-    cursor.execute("DELETE FROM employees;")#change to 1_000_000 when doing 10^6
+    cursor.execute("""
+        CREATE TABLE employees (
+            ssnum INT,
+            name VARCHAR(255),
+            lat DECIMAL(15,2),
+            longitude DECIMAL(15,2),
+            hundreds1 INT,
+            hundreds2 INT
+        );
+    """)
     conn.commit()
-    cursor.execute("LOAD DATA LOCAL INFILE '/data/aa10733/database1/employeesindex_10_5.csv' INTO TABLE employees FIELDS TERMINATED BY ',' LINES TERMINATED BY '\n' IGNORE 1 LINES (ssnum, name, lat, longitude, hundreds1, hundreds2);") #change 
+    cursor.execute("""
+        LOAD DATA LOCAL INFILE '/data/aa10733/database1/employeesindex_10_5.csv'
+        INTO TABLE employees
+        FIELDS TERMINATED BY ','
+        LINES TERMINATED BY '\n'
+        IGNORE 1 LINES
+        (ssnum, name, lat, longitude, hundreds1, hundreds2);
+    """)
     conn.commit()
-    cursor.execute("CREATE CLUSTERED INDEX c on employees WITH FILLFACTOR=100;")#change to 1_000_000 when doing 10^6
+
+    insert_query = """
+        INSERT INTO employees (
+            ssnum, name, lat, longitude, hundreds1, hundreds2
+        ) VALUES (%s, %s, %s, %s, %s, %s)
+    """
+    with open(file_path, "r") as f:
+        next(f)  # skip header
+        for idx, line in enumerate(f):
+            if idx >= row_count:
+                break
+            fields = line.strip().split(",")
+            cursor.execute(insert_query, fields[:COLUMN_COUNT])
+            conn.commit()
+    cursor.execute("CREATE INDEX c ON employees (hundreds1) WITH FILLFACTOR=100;")
     conn.commit()
     conn.close()
 # === Step: Clear the table by deleting rows with ssnum > 100000 ===
@@ -81,7 +113,7 @@ def insert_and_track(file_path, conn, total_rows):
                 checkpoint_times.append((row_count, now_real - start_real, now_cpu - start_cpu, throughput))
                 print(f">>> {row_count} rows inserted: Real={now_real - start_real:.3f}s, "
                       f"CPU={now_cpu - start_cpu:.3f}s, Throughput={throughput:.3f} rows/sec")
-                maintain()
+                maintain(file_path, row_count)
                 last_real = time.time()
                 last_cpu = time.process_time()
                 last_row = row_count
