@@ -46,19 +46,20 @@ def maintain(file_path, row_count):
     """)
     conn.commit()
 
-    insert_query = """
-        INSERT INTO employees (
-            ssnum, name, lat, longitude, hundreds1, hundreds2
-        ) VALUES (%s, %s, %s, %s, %s, %s)
-    """
-    with open(file_path, "r") as f:
-        next(f)  # skip header
-        for idx, line in enumerate(f):
-            if idx >= row_count:
-                break
-            fields = line.strip().split(",")
-            cursor.execute(insert_query, fields[:COLUMN_COUNT])
-            conn.commit()
+    if row_count>0:
+        insert_query = """
+            INSERT INTO employees (
+                ssnum, name, lat, longitude, hundreds1, hundreds2
+            ) VALUES (%s, %s, %s, %s, %s, %s)
+        """
+        with open(file_path, "r") as f:
+            next(f)  # skip header
+            for idx, line in enumerate(f):
+                if idx >= row_count:
+                    break
+                fields = line.strip().split(",")
+                cursor.execute(insert_query, fields[:COLUMN_COUNT])
+                conn.commit()
     cursor.execute("CREATE INDEX c ON employees (hundreds1) WITH FILLFACTOR=100;")
     conn.commit()
     conn.close()
@@ -69,7 +70,7 @@ def clear_table():
     cursor.execute("DELETE FROM employees WHERE ssnum > 100000;")#change to 1_000_000 when doing 10^6
     conn.commit()
     conn.close()
-    maintain()
+    maintain('', 0)
 
 # === Step: Insert rows one-by-one and record timing at checkpoints ===
 def insert_and_track(file_path, conn, total_rows):
