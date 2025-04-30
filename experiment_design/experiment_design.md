@@ -1247,11 +1247,25 @@ Range Query
 ```sql
 select count(*) from spatial_facts where a3 > 10 and a3 < 1000000 and a7 > 800000 and a7 < 1000000;
 
+-- for 10^7
+select count(*) FROM spatial_facts
+WHERE a3 >= 15000 AND a3 <= 40000
+  AND a7 >= 15000 AND a7 <= 20000;
+
+
 SELECT COUNT(*)
 FROM spatial_facts
 WHERE ST_Within(
     geom_a3_a7, 
     ST_PolygonFromText('POLYGON((10 800000, 1000000 800000, 1000000 1000000, 10 1000000, 10 800000))')
+);
+
+-- for 10^7
+SELECT COUNT(*)
+FROM spatial_facts
+WHERE ST_Within(
+    geom_a3_a7, 
+    ST_PolygonFromText('POLYGON((15000 15000, 40000 15000, 40000 20000, 15000 20000, 15000 15000))')
 );
 ```
 
