@@ -16,8 +16,6 @@ In summary, these benchmark studies illustrate distinct strengths among database
 
 The current research expands upon these prior studies by systematically benchmarking MySQL, PostgreSQL, MariaDB, and DuckDB using the InnoDB storage engine across identical workloads and configurations. This comprehensive approach, particularly the inclusion of DuckDB alongside traditional relational databases and consistent use of InnoDB, aims to uncover new performance insights not previously documented. By maintaining uniform testing conditions and examining contemporary versions of these database systems, this study will provide fresh comparative data valuable for selecting optimal database solutions tailored to specific modern workloads.
 
-Certainly! Here is a compiled list of citations for the benchmark studies you've referenced in your research paper, formatted in APA style:
-
 ---
 
 1. Andjelić, S., Obradović, S., & Gačesa, B. (2008).
