@@ -1046,10 +1046,10 @@ UPDATE employees SET name = '{new_name}', WHERE longitude = {value};
 ```
 
 
-Range
+Search
 
 
-Using experiment_design/query/small_table/small_range.py for 100 update each process, measuring the time of executing a fixed number of queries
+Using experiment_design/query/small_table/small_search.py for 100 update each process, measuring the time of executing a fixed number of queries
 
 
 
