@@ -1,0 +1,31 @@
+input size recommandation: 100000，10000000
+only uniformly distributed data
+
+table:
+n = input size
+scanwin_multipoint(onepercent1, onepercent2, fivepercent1, fivepercent2; tenpercent1, tenpercent2; twentypercent1, twentypercent2);
+	onepercent*: int	[1, 100]    				number = 0.01 * n
+	fivepercent*: int	[1, 20]    			  	number = 0.05 * n
+  tenpercent*: int	[1, 10]    			  	number = 0.1 * n
+  twentypercent*: int	[1, 5]    			  number = 0.2 * n
+
+all columns are differently shuffled
+
+create schema:
+CREATE TABLE scanwin_multipoint (
+    onepercent1 INT,
+    onepercent2 INT,
+    fivepercent1 INT,
+    fivepercent2 INT,
+    tenpercent1 INT,
+    tenpercent2 INT,
+    twentypercent1 INT,
+    twentypercent2 INT
+);
+CREATE INDEX idx_onepercent1 ON scanwin_multipoint(onepercent1);
+CREATE INDEX idx_fivepercent1 ON scanwin_multipoint(fivepercent1);
+CREATE INDEX idx_tenpercent1 ON scanwin_multipoint(tenpercent1);
+CREATE INDEX idx_twentypercent1 ON scanwin_multipoint(twentypercent1);
+
+
+
