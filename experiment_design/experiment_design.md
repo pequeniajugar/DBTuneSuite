@@ -941,8 +941,7 @@ select * from employees where longitude = 2108;-- 10^7
 covering 
 
 ```sql
-select ssnum, name from employees where lat = 4009.01;-- 10^5
-select ssnum, name from employees where lat = 1054;-- 10^7
+select ssnum, name from employees where lat = 105;
 ```
 
 covering - not ordered
@@ -951,7 +950,10 @@ covering - not ordered
 select ssnum, hundreds2 from employees where name = 'name10';
 ```
 
-
+clustered
+```sql
+SELECT name, longitude FROM employees WHERE hundreds1 = 105;
+```
 
 ##  scan wins
 
