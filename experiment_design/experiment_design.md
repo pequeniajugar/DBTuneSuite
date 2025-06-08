@@ -966,30 +966,18 @@ SELECT name, longitude FROM employees WHERE hundreds1 = 105;
 
 **sub experiments** for each dataset&index situation:
 
-- multipoint query
+- multipoint query 1%, 5%, 10%, 20%
 
-- multipoint query for access ratio 1%
+- membership query for access ratio 100rows and 1%
 
 - range query for access ratio 1%, 5%, 10%, 20%, 40%
-
   
 
+### range query
+use database employees
 **for index (hundreds2)**
 
 --  10^5
-
-```sql
-select * from employees where hundreds2 = 150; -- multipoint query
-```
-
-```bash
- # in bash file
- LONGITUDE_VALUES=$(seq 100 110 | paste -sd,)
-    QUERY=$(cat <<EOF
-select * from employees where hundreds2 in ($LONGITUDE_VALUES);
-EOF
-) #multipoint query for 1%
-```
 
 ```sql
 select * from employees where hundreds2 < 110; -- 1%
@@ -1000,19 +988,6 @@ select * from employees where hundreds2 < 500; -- 40%
 ```
 
 --  10^7
-
-```sql
-select * from employees where hundreds2 = 5100; -- multipoint query
-```
-
-```bash
- # in bash file
- LONGITUDE_VALUES=$(seq 100 1100 | paste -sd,)
-    QUERY=$(cat <<EOF
-select * from employees where hundreds2 in ($LONGITUDE_VALUES);
-EOF
-) #multipoint query for 1%
-```
 
 ```sql
 select * from employees where hundreds2 < 1100; -- 1%
@@ -1026,6 +1001,66 @@ select * from employees where hundreds2 < 40100; -- 40%
 
 change all the *hundreds* column in the codes into *longitude*
 
+### membership query
+use database employees
+**for index (hundreds2)**
+
+--  10^5
+
+```sql
+select * from employees where hundreds2 = 150; -- 100rows
+```
+
+```bash
+ # in bash file
+ LONGITUDE_VALUES=$(seq 100 110 | paste -sd,)
+    QUERY=$(cat <<EOF
+select * from employees where hundreds2 in ($LONGITUDE_VALUES);
+EOF
+) -- 1%
+```
+--  10^7
+
+```sql
+select * from employees where hundreds2 = 5100; --100rows
+```
+
+```bash
+ # in bash file
+ LONGITUDE_VALUES=$(seq 100 1100 | paste -sd,)
+    QUERY=$(cat <<EOF
+select * from employees where hundreds2 in ($LONGITUDE_VALUES);
+EOF
+) --1%
+```
+**for no index(longitude)**
+
+change all the *hundreds* column in the codes into *longitude*
+
+###  multipoint query
+use database scanwin_multipoint (refer to /data_generation/employees/scanwin_multipoint.py & scanwin_multipoint_schema.txt)
+
+**for index (columnname1)**
+
+--  10^5 & 10^7
+
+```sql
+select * from scanwin_multipoint where onepercent1 = 3; -- 1%
+select * from scanwin_multipoint where fivepercent1 = 3; -- 5%
+select * from scanwin_multipoint where tenpercent1 = 3; -- 10%
+select * from scanwin_multipoint where twentypercent1 = 3; -- 20%
+```
+
+**for index (columnname2)**
+
+--  10^5 & 10^7
+
+```sql
+select * from scanwin_multipoint where onepercent2 = 3; -- 1%
+select * from scanwin_multipoint where fivepercent2 = 3; -- 5%
+select * from scanwin_multipoint where tenpercent2 = 3; -- 10%
+select * from scanwin_multipoint where twentypercent2 = 3; -- 20%
+```
 
 
 ##  index on small tables
