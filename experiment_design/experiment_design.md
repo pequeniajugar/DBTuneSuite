@@ -1051,7 +1051,7 @@ select * from scanwin_multipoint where tenpercent1 = 3; -- 10%
 select * from scanwin_multipoint where twentypercent1 = 3; -- 20%
 ```
 
-**for index (columnname2)**
+**for no index (columnname2)**
 
 --  10^5 & 10^7
 
