@@ -1078,6 +1078,9 @@ Using experiment_design/query/small_table/small_updates.py for 100 update each p
 -- clustered index
 UPDATE employees SET name = '{new_name}', WHERE hundreds1 = {value};
 
+-- nonclustered index
+UPDATE employees SET name = '{new_name}', WHERE hundreds2 = {value};
+
 -- no index, scan 
 UPDATE employees SET name = '{new_name}', WHERE longitude = {value};
 ```
@@ -1093,6 +1096,9 @@ Using experiment_design/query/small_table/small_search.py for 100 update each pr
 ```sql
 -- clustered index
 SELECt COUNT(*) FROM employees WHERE hundreds1 = {value};
+
+-- nonclustered index
+SELECt COUNT(*) FROM employees WHERE hundreds2 = {value};
 
 -- no index, scan 
 SELECT COUNT(*) FROM employees WHERE longitude = {value};
@@ -1145,6 +1151,7 @@ select * from employees where hundreds1= 150;
 
 --  range
 select * from employees where longitude between 150 and 160;
+select * from employees where lat between 150 and 160; -- scan
 
 -- point query
 select * from employees where ssnum = 150;
