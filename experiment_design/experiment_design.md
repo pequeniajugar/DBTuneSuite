@@ -1219,22 +1219,22 @@ Without redundant tables
 select orders.vendorid, sum(orders.quantity*item.price)
 		from orders,item
 		where orders.itemnum = item.itemnum
-		and orders.vendorid = 100;
+		and orders.vendorid = 10;
 ```
 ```sql
 select store.storeid, sum(orders.quantity*item.price)
                 from orders,item, store
                 where orders.itemnum = item.itemnum
                   and orders.storeid = store.storeid
-                  and store.storeid = 100;
+                  and store.storeid = 10;
 ```
 
 With redundant tables
 ```sql
-select * from vendorOutstanding;
+select * from vendorOutstanding where vendorid = 10;
 ```
 ```sql
-select * from storeOutstanding;
+select * from storeOutstanding where storeid = 10;
 ```
 
 ## Multidimensional Indexes -- queries
