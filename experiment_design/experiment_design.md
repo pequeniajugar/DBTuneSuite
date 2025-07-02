@@ -1219,14 +1219,14 @@ Without redundant tables
 select orders.vendorid, sum(orders.quantity*item.price)
 		from orders,item
 		where orders.itemnum = item.itemnum
-		group by orders.vendorid;
+		and orders.vendorid = 100;
 ```
 ```sql
 select store.storeid, sum(orders.quantity*item.price)
                 from orders,item, store
                 where orders.itemnum = item.itemnum
                   and orders.storeid = store.storeid
-                group by store.storeid;
+                  and store.storeid = 100;
 ```
 
 With redundant tables
