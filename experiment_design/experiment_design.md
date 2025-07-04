@@ -1216,25 +1216,25 @@ Get insert statements from data_generation/triggers_inserts.py [do row by row in
 
 Without redundant tables
 ```sql
-select orders.vendorid, sum(orders.quantity*item.price)
+select sum(orders.quantity*item.price)
 		from orders,item
 		where orders.itemnum = item.itemnum
-		and orders.vendorid = 10;
+		and orders.vendorid = '10';
 ```
 ```sql
-select store.storeid, sum(orders.quantity*item.price)
+select sum(orders.quantity*item.price)
                 from orders,item, store
                 where orders.itemnum = item.itemnum
                   and orders.storeid = store.storeid
-                  and store.storeid = 10;
+                  and store.storeid = '10';
 ```
 
 With redundant tables
 ```sql
-select * from vendorOutstanding where vendorid = 10;
+select amount from vendorOutstanding where vendorid = '10';
 ```
 ```sql
-select * from storeOutstanding where storeid = 10;
+select amount from storeOutstanding where storeid = '10';
 ```
 
 ## Multidimensional Indexes -- queries
