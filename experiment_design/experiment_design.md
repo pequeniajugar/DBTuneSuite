@@ -1209,26 +1209,28 @@ DELIMITER ;
 Get insert statements from data_generation/triggers_inserts.py [do row by row insert]
 
 Without redundant tables
+every run change the id to prevent cache
 ```sql
 select sum(orders.quantity*item.price)
 		from orders,item
 		where orders.itemnum = item.itemnum
-		and orders.vendorid = '10';
+		and orders.vendorid = '10'; --change to '11', '12', '13'...'19'
 ```
 ```sql
 select sum(orders.quantity*item.price)
                 from orders,item, store
                 where orders.itemnum = item.itemnum
                   and orders.storeid = store.storeid
-                  and store.storeid = '10';
+                  and store.storeid = '10'; --change to '11', '12', '13'...'19'
 ```
 
 With redundant tables
+every run change the id to prevent cache
 ```sql
-select amount from vendorOutstanding where vendorid = '10';
+select amount from vendorOutstanding where vendorid = '10'; --change to '11', '12', '13'...'19'
 ```
 ```sql
-select amount from storeOutstanding where storeid = '10';
+select amount from storeOutstanding where storeid = '10'; --change to '11', '12', '13'...'19'
 ```
 
 ## Multidimensional Indexes -- queries
