@@ -61,7 +61,7 @@ item(itemnum, price);
 
 CREATE TABLE item (
     itemnum INT,
-    price DECIMAL(10,2)
+    price int
 );
 
 
@@ -77,7 +77,7 @@ vendorOutstanding( vendorid, amount);
 
 CREATE TABLE vendorOutstanding(
     vendorid VARCHAR(20),
-    amount DECIMAL(10,2)
+    amount int
 );
 
 
@@ -89,5 +89,5 @@ storeOutstanding( storeid, amount);
 
 CREATE TABLE storeOutstanding (
     storeid VARCHAR(20),
-    amount DECIMAL(10,2)
+    amount int
 );
