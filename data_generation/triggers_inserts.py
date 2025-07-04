@@ -1,13 +1,21 @@
 import pandas as pd
+import numpy as np
+import random
 
-# Generate 1000 rows of data
+random.seed(42)
+np.random.seed(42)
+
+shuffled_itemnums = np.random.permutation(range(1, 1001))
+shuffled_storeids = np.random.permutation(range(1, 1001))
+shuffled_vendorids = np.random.permutation(range(1, 1001))
+
 data = []
 for i in range(1000):
     order_id = 100000000 + i
-    itemnum = 7000 + (i % 100)       # Cycle through 100 different itemnums
-    quantity = 500 + (i % 100)       # Vary quantities
-    storeid = f"xxxxxx{i:04d}"       # Padded storeid
-    vendorid = f"vendor{i % 10}"     # Cycle through 10 vendors
+    itemnum = shuffled_itemnums[i]
+    quantity = 500 + (i % 100)
+    storeid = shuffled_storeids[i]
+    vendorid = shuffled_vendorids[i]
     data.append([order_id, itemnum, quantity, storeid, vendorid])
 
 df = pd.DataFrame(data, columns=["order_id", "itemnum", "quantity", "storeid", "vendorid"])
