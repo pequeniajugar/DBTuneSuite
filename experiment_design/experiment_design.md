@@ -910,24 +910,38 @@ CREATE INDEX idx_nc4 ON employees (lat, ssnum, name);
 
 
 **query**
+```sql
+CREATE TABLE employees (
+    ssnum INT,
+    ssnumpermuted1 INT,
+    ssnumpermuted2 INT,
+    name VARCHAR(255),
+    lat INT,
+    longitude INT,
+    hundreds1 INT,
+    hundreds2 INT
+);
+ALTER TABLE employees ADD PRIMARY KEY (ssnum);
+CREATE INDEX idx_ssnumpermuted1 ON employees (ssnumpermuted1);
+
+```
 
 clustered index
 
 ```sql
-select * from employees where hundreds1 = 800; 
+select * from employees where ssnum = 800; 
 ```
 
 nonclustered index
 
 ```sql
-select * from employees where hundreds2= 800;
+select * from employees where ssnumpermuted1= 800;
 ```
 
 no index
 
 ```sql
-select * from employees where longitude = 8018.02;-- 10^5
-select * from employees where longitude = 2108;-- 10^7
+select * from employees where ssnumpermuted2 = 800;
 ```
 
 
