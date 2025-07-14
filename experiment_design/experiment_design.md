@@ -925,6 +925,7 @@ ALTER TABLE employees ADD PRIMARY KEY (ssnum);
 CREATE INDEX idx_ssnumpermuted1 ON employees (ssnumpermuted1);
 
 ```
+** --point index**
 
 clustered index
 
@@ -944,7 +945,25 @@ no index
 select * from employees where ssnumpermuted2 = 800;
 ```
 
+** --range index**
 
+clustered index
+
+```sql
+select * from employees where ssnum BETWEEN 100 AND 1100; 
+```
+
+nonclustered index
+
+```sql
+select * from employees where ssnumpermuted1 BETWEEN 100 AND 1100; 
+```
+
+no index
+
+```sql
+select * from employees where ssnumpermuted2 BETWEEN 100 AND 1100; 
+```
 
 ##  covering index
 
