@@ -991,6 +991,20 @@ SELECT name, longitude FROM employees WHERE hundreds1 = 105;
 ##  scan wins
 
 ![image-20250209033907982](images/scan_win.png)
+**ways for force using index**
+for mysql&mariadb: 
+```sql
+SELECT * FROM employees FORCE INDEX (idx_col) WHERE col = {value};
+```
+for postgresql:
+```sql
+enable_seqscan = off
+```
+for duckdb:
+```sql
+SET index_scan_percentage = 100;
+SET index_scan_max_count = 1000000;
+```
 
 **comparison groups**
 
@@ -1109,13 +1123,13 @@ Using experiment_design/query/small_table/small_updates.py for 100 update each p
 
 ```sql
 -- clustered index
-UPDATE employees SET name = '{new_name}', WHERE hundreds1 = {value};
+UPDATE employees SET name = '{new_name}', WHERE ssnum = {value};
 
 -- nonclustered index
-UPDATE employees SET name = '{new_name}', WHERE hundreds2 = {value};
+UPDATE employees SET name = '{new_name}', WHERE ssnumpermuted1 = {value};
 
 -- no index, scan 
-UPDATE employees SET name = '{new_name}', WHERE longitude = {value};
+UPDATE employees SET name = '{new_name}', WHERE ssnumpermuted2 = {value};
 ```
 
 
@@ -1128,13 +1142,13 @@ Using experiment_design/query/small_table/small_search.py for 100 update each pr
 
 ```sql
 -- clustered index
-SELECt COUNT(*) FROM employees WHERE hundreds1 = {value};
+SELECt COUNT(*) FROM employees WHERE ssnum = {value};
 
 -- nonclustered index
-SELECt COUNT(*) FROM employees WHERE hundreds2 = {value};
+SELECt COUNT(*) FROM employees WHERE ssnumpermuted1 = {value};
 
 -- no index, scan 
-SELECT COUNT(*) FROM employees WHERE longitude = {value};
+SELECT COUNT(*) FROM employees WHERE ssnumpermuted2 = {value};
 ```
 
 
