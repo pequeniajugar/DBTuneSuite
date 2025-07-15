@@ -907,6 +907,20 @@ CREATE INDEX idx_nc3 ON employees (ssnum, name, hundreds2);
 CREATE INDEX idx_nc4 ON employees (lat, ssnum, name);
 ```
 
+**ways for force using index**
+for mysql&mariadb: 
+```sql
+SELECT * FROM employees FORCE INDEX (idx_col) WHERE col = {value};
+```
+for postgresql:
+```sql
+enable_seqscan = off
+```
+for duckdb:
+```sql
+SET index_scan_percentage = 100;
+SET index_scan_max_count = 1000000;
+```
 
 
 **query**
@@ -1119,6 +1133,20 @@ Updates
 
 Using experiment_design/query/small_table/small_updates.py for 100 update each process, measuring the time of executing a fixed number of queries
 
+**ways for force using index**
+for mysql&mariadb: 
+```sql
+SELECT * FROM employees FORCE INDEX (idx_col) WHERE col = {value};
+```
+for postgresql:
+```sql
+enable_seqscan = off
+```
+for duckdb:
+```sql
+SET index_scan_percentage = 100;
+SET index_scan_max_count = 1000000;
+```
 
 
 ```sql
@@ -1126,10 +1154,10 @@ Using experiment_design/query/small_table/small_updates.py for 100 update each p
 UPDATE employees SET name = '{new_name}', WHERE ssnum = {value};
 
 -- nonclustered index
-UPDATE employees SET name = '{new_name}', WHERE ssnumpermuted1 = {value};
+UPDATE employees SET name = '{new_name}', WHERE hundreds2 = {value};
 
 -- no index, scan 
-UPDATE employees SET name = '{new_name}', WHERE ssnumpermuted2 = {value};
+UPDATE employees SET name = '{new_name}', WHERE longitude = {value};
 ```
 
 
@@ -1145,10 +1173,10 @@ Using experiment_design/query/small_table/small_search.py for 100 update each pr
 SELECt COUNT(*) FROM employees WHERE ssnum = {value};
 
 -- nonclustered index
-SELECt COUNT(*) FROM employees WHERE ssnumpermuted1 = {value};
+SELECt COUNT(*) FROM employees WHERE hundreds2 = {value};
 
 -- no index, scan 
-SELECT COUNT(*) FROM employees WHERE ssnumpermuted2 = {value};
+SELECT COUNT(*) FROM employees WHERE longitude = {value};
 ```
 
 
