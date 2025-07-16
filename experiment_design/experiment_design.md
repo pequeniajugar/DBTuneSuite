@@ -899,14 +899,6 @@ hundreds2: 12, 28, 2, 4, .... up to Nth number
 
 There will be repeats because while there N rows, there are only N/100 distinct values for each of these attributes
 
-```sql
--- if no explict clustered/nonclustered index
-CREATE INDEX idx_c ON employees (hundreds1); 
-CREATE INDEX idx_nc ON employees (hundreds2);
-CREATE INDEX idx_nc3 ON employees (ssnum, name, hundreds2);
-CREATE INDEX idx_nc4 ON employees (lat, ssnum, name);
-```
-
 **ways for force using index**
 for mysql&mariadb: 
 ```sql
