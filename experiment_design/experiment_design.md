@@ -1193,8 +1193,8 @@ ALTER TABLE employees ENGINE = MEMORY;
 --  for mysql & mariadb
 ```
 ```sql
-SET GLOBAL max_heap_table_size = 10737418240;
-SET GLOBAL tmp_table_size = 10737418240;
+SET GLOBAL max_heap_table_size = 16 * 1024 * 1024 * 1024;;
+SET GLOBAL tmp_table_size = 16 * 1024 * 1024 * 1024;;
 ```
 **create index**
 
