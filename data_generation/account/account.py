@@ -11,6 +11,7 @@ def generate_and_save_accounts(num_accounts, batch_size):
     file_account = f"account_10_{exponent}.csv"
     file_account1 = f"account1_10_{exponent}.csv"
     file_account2 = f"account2_10_{exponent}.csv"
+    chars = string.ascii_letters + string.digits
 
     ids = list(range(1, num_accounts + 1))
 
@@ -27,7 +28,7 @@ def generate_and_save_accounts(num_accounts, batch_size):
         end = min(start + batch_size, num_accounts)  # Compute batch end index
         batch_ids = ids[start:end]  # Get uniform IDs for this batch
         balances = np.round(np.random.uniform(5000, 10000, len(batch_ids)), 2)  # Generate balances in batch
-        addresses = [f"address{i+1}"*300 for i in range(start, end)]    #Making a minimum 2048 length address
+        addresses = [str(''.join(random.choices(chars, k=2500))) for i in range(start, end)]    #Making a 2500 length address
 
         # Organize data
         batch_data = list(zip(batch_ids, balances, addresses))
