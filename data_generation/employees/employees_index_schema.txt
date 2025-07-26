@@ -7,8 +7,8 @@ n = input size
 employees(ssnum, name, lat, long, hundreds1,hundreds2);
 	ssnum: int	1... n		primary key		number = n
 	name: text	Employee1...Employeen		number = n/100
-	lat: demical.2		(-90, 90)       			 	number = n/100
-	long: demical.2	(100, 1100)    				number = n/100
+	lat: int	(100, 1100)       			 	number = n/100
+	long: int	(100, 1100)    				number = n/100
 	hundreds1: int	(100, 1000)    				number = n/100
 	hundreds2: int	(100, 1000)    				number = n/100
 
@@ -20,8 +20,8 @@ create schema:
 CREATE TABLE employees (
     ssnum INT,
     name VARCHAR(255),    
-    lat DECIMAL(10,2),
-    long DECIMAL(10,2), 
+    lat INT,
+    long INT, 
     hundreds1 INT,
     hundreds2 INT);
 
