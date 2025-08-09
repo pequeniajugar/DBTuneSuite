@@ -910,7 +910,7 @@ enable_seqscan = off
 ```
 for duckdb:
 ```sql
-SET index_scan_percentage = 100;
+SET index_scan_percentage = 1;
 SET index_scan_max_count = 1000000;
 ```
 
