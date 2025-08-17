@@ -21,7 +21,7 @@ CREATE TABLE employees (
     ssnum INT,
     name VARCHAR(255),    
     lat INT,
-    long INT, 
+    longitude INT, 
     hundreds1 INT,
     hundreds2 INT);
 
