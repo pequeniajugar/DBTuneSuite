@@ -1,30 +1,34 @@
-# === run_pool_mode.py ===
+# === pool.py ===
 import time
 import threading
 import random
+import argparse
+import csv
+from pathlib import Path
 from sqlalchemy import create_engine, text
 from sqlalchemy.pool import QueuePool
 
-# === Experiment Parameters ===
-DB_CONFIG = {
-    "user": "tw3090",
-    "password": "64113491Ka",
-    "host": "localhost",
-    "port": 15559,
-    "database": "employees10_5",
-}
-MAX_CONN = 25
-POOL_SIZE = 25
-NUM_THREADS = 500
-RETRY_WAIT = 0
-DB_URL = f"mysql+pymysql://{DB_CONFIG['user']}:{DB_CONFIG['password']}@{DB_CONFIG['host']}:{DB_CONFIG['port']}/{DB_CONFIG['database']}"
+def parse_args():
+    ap = argparse.ArgumentParser(description="MySQL/MariaDB pooled insert benchmark")
+    ap.add_argument("--db", required=True, help="Database name")
+    ap.add_argument("--max-conn", type=int, required=True, help="SET GLOBAL max_connections")
+    ap.add_argument("--pool-size", type=int, required=True, help="SQLAlchemy QueuePool size")
+    ap.add_argument("--threads", type=int, required=True, help="Number of worker threads")
+    # Optional connection params (with defaults)
+    ap.add_argument("--user", default="tw3090")
+    ap.add_argument("--password", default="64113491Ka")
+    ap.add_argument("--host", default="localhost")
+    ap.add_argument("--port", type=int, default=15559)
+    return ap.parse_args()
 
-# === Utilities ===
 def generate_insert_query(start_ssnum):
     values = []
     for i in range(5):
         ssnum = start_ssnum + i + 1
-        values.append(f"({ssnum}, 'Employee_{ssnum}', {random.randint(0, 9999)}, {random.randint(0, 9999)}, {random.randint(0, 100)}, {random.randint(0, 100)})")
+        values.append(
+            f"({ssnum}, 'Employee_{ssnum}', {random.randint(0, 9999)}, "
+            f"{random.randint(0, 9999)}, {random.randint(0, 100)}, {random.randint(0, 100)})"
+        )
     return (
         "INSERT INTO employees (ssnum, name, lat, longitude, hundreds1, hundreds2) VALUES "
         + ", ".join(values)
@@ -34,23 +38,19 @@ def get_max_ssnum(conn):
     result = conn.execute(text("SELECT COALESCE(MAX(ssnum), 0) FROM employees"))
     return result.scalar()
 
-def delete_new_rows(conn, max_ssnum):
-    conn.execute(text("DELETE FROM employees WHERE ssnum > 100000"))
+def delete_new_rows(conn, cutoff_ssnum):
+    conn.execute(text("DELETE FROM employees WHERE ssnum > :cutoff"), {"cutoff": cutoff_ssnum})
     conn.commit()
 
-def count_employees(conn):
-    result = conn.execute(text("SELECT COUNT(*) FROM employees"))
-    return result.scalar()
-
-def set_mariadb_max_connections(val):
-    with create_engine(DB_URL).connect() as conn:
+def set_mariadb_max_connections(engine, val):
+    with engine.connect() as conn:
         conn.execute(text(f"SET GLOBAL max_connections = {val}"))
 
-def create_pool():
+def create_pool(db_url, pool_size):
     return create_engine(
-        DB_URL,
+        db_url,
         poolclass=QueuePool,
-        pool_size=POOL_SIZE,
+        pool_size=pool_size,
         max_overflow=0,
         pool_timeout=None,
         pool_recycle=1800,
@@ -72,20 +72,40 @@ def run_experiment(thread_id, query, exec_times, resp_times, engine):
             resp_times.append(round(time.perf_counter() - start_resp, 6))
             break
         except Exception:
-            #time.sleep(RETRY_WAIT)
             attempt += 1
 
-def run():
-    set_mariadb_max_connections(MAX_CONN)
-    engine = create_pool()
-    conn = engine.connect()
-    base = get_max_ssnum(conn)
-    queries = {i+1: generate_insert_query(base + i * 5) for i in range(NUM_THREADS)}
-    delete_new_rows(conn, base - 1)
+def write_result_csv(db_name, mode, pool_or_max, threads, exec_time, resp_time):
+    script_dir = Path(__file__).resolve().parent
+    results_dir = script_dir / "results"
+    results_dir.mkdir(parents=True, exist_ok=True)
+    out_path = results_dir / f"{db_name}_pooling.csv"
 
+    file_exists = out_path.exists()
+    with open(out_path, "a", newline="") as f:
+        writer = csv.writer(f)
+        if not file_exists:
+            writer.writerow(["execution_time", "response_time", "mode", "pool_or_max_conn", "threads"])
+        writer.writerow([f"{exec_time:.6f}", f"{resp_time:.6f}", mode, pool_or_max, threads])
+
+def main():
+    args = parse_args()
+    db_url = f"mysql+pymysql://{args.user}:{args.password}@{args.host}:{args.port}/{args.db}"
+
+    engine = create_pool(db_url, args.pool_size)
+    set_mariadb_max_connections(engine, args.max_conn)
+
+    conn = engine.connect()
+
+    # base max ssnum
+    base = get_max_ssnum(conn)
+
+    # prepare INSERT
+    queries = {i + 1: generate_insert_query(base + i * 5) for i in range(args.threads)}
+
+    # timing
     threads, execs, resps = [], [], []
     t0, c0 = time.perf_counter(), time.process_time()
-    for i in range(NUM_THREADS):
+    for i in range(args.threads):
         t = threading.Thread(target=run_experiment, args=(i + 1, queries[i + 1], execs, resps, engine))
         threads.append(t)
         t.start()
@@ -93,13 +113,21 @@ def run():
         t.join()
     t1, c1 = time.perf_counter(), time.process_time()
 
-    print(f"POOL | Threads={NUM_THREADS} | Pool={POOL_SIZE} | max_conn={MAX_CONN}")
-    print(f"  CPU Time:  {c1 - c0:.4f}s")
-    print(f"  Wall Time: {t1 - t0:.4f}s")
-    print(f"  Success:   {len(execs)}/{NUM_THREADS}")
+    total_cpu = c1 - c0
+    total_wall = t1 - t0
+
+    print(f"POOL | Threads={args.threads} | Pool={args.pool_size} | max_conn={args.max_conn}")
+    print(f"  CPU Time:  {total_cpu:.4f}s")
+    print(f"  Wall Time: {total_wall:.4f}s")
+    print(f"  Success:   {len(execs)}/{args.threads}")
+
+    # write CSV
+    write_result_csv(args.db, "pool", args.pool_size, args.threads, total_cpu, total_wall)
+
+    # delete new insertions
     delete_new_rows(conn, base)
     conn.close()
     engine.dispose()
 
 if __name__ == "__main__":
-    run()
+    main()
