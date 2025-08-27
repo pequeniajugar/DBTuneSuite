@@ -8,6 +8,8 @@ from pathlib import Path
 from sqlalchemy import create_engine, text
 from sqlalchemy.pool import QueuePool
 
+random.seed(42)
+
 def parse_args():
     ap = argparse.ArgumentParser(description="MySQL/MariaDB pooled insert benchmark")
     ap.add_argument("--db", required=True, help="Database name")
