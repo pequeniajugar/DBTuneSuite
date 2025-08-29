@@ -1,5 +1,5 @@
 #!/bin/bash
-# Usage: ./pool.sh <duckdb_file>
+# Usage: ./connectionpooling.sh <duckdb_file_address>
 set -euo pipefail
 
 if [[ $# -lt 1 ]]; then
