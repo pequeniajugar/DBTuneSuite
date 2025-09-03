@@ -11,7 +11,7 @@ MYSQL_DATABASE = "databasename"
 MYSQL_HOST = "localhost"
 MYSQL_PORT = 15559
 
-DATA_FILE = "path to your filtered_lineitem.tbl"
+DATA_FILE = "path to your lineitem.tbl"
 TEMP_DIR = "./batches"
 BATCH_SIZES = [100,1000,10000,50000,100000]
 RUNS_PER_BATCH = 10
