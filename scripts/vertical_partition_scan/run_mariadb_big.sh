@@ -17,29 +17,29 @@ DATABASE_NAME="$1"
 # --- Extreme Cases ---
 echo "-----extreme cases-----" > "$OUTPUT_FILE"
 
-echo "---with vertical partitioning---" >> "$OUTPUT_FILE"
-bash "$SCRIPT_DIR/../base_mariadb.sh" "$DATABASE_NAME" "SELECT id, balance FROM account1;" >> "$OUTPUT_FILE"
+echo "---with vertical partitioning---" | tee -a "$OUTPUT_FILE"
+bash "$SCRIPT_DIR/../base_mariadb.sh" "$DATABASE_NAME" "SELECT id, balance FROM account1;" | tee -a "$OUTPUT_FILE"
 
-echo "---without vertical partitioning---" >> "$OUTPUT_FILE"
-bash "$SCRIPT_DIR/../base_mariadb.sh" "$DATABASE_NAME" "SELECT id, balance FROM account;" >> "$OUTPUT_FILE"
+echo "---without vertical partitioning---" | tee -a "$OUTPUT_FILE"
+bash "$SCRIPT_DIR/../base_mariadb.sh" "$DATABASE_NAME" "SELECT id, balance FROM account;" | tee -a "$OUTPUT_FILE"
 
 
 # --- Without Vertical Partitioning ---
-echo "-----Without Vertical Partitioning-----" >> "$OUTPUT_FILE"
+echo "-----Without Vertical Partitioning-----" | tee -a "$OUTPUT_FILE"
 
-echo "---Access All Fields---" >> "$OUTPUT_FILE"
-bash "$SCRIPT_DIR/../base_mariadb.sh" "$DATABASE_NAME" "SELECT * FROM account;" >> "$OUTPUT_FILE"
+echo "---Access All Fields---" | tee -a "$OUTPUT_FILE"
+bash "$SCRIPT_DIR/../base_mariadb.sh" "$DATABASE_NAME" "SELECT * FROM account;" | tee -a "$OUTPUT_FILE"
 
-echo "---Access Partial Fields---" >> "$OUTPUT_FILE"
-bash "$SCRIPT_DIR/../base_mariadb.sh" "$DATABASE_NAME" "SELECT id, balance FROM account;" >> "$OUTPUT_FILE"
+echo "---Access Partial Fields---" | tee -a "$OUTPUT_FILE"
+bash "$SCRIPT_DIR/../base_mariadb.sh" "$DATABASE_NAME" "SELECT id, balance FROM account;" | tee -a "$OUTPUT_FILE"
 
 
 # --- With Vertical Partitioning ---
-echo "-----With Vertical Partitioning-----" >> "$OUTPUT_FILE"
+echo "-----With Vertical Partitioning-----" | tee -a "$OUTPUT_FILE"
 
-echo "---Access All Fields---" >> "$OUTPUT_FILE"
+echo "---Access All Fields---" | tee -a "$OUTPUT_FILE"
 bash "$SCRIPT_DIR/../base_mariadb.sh" "$DATABASE_NAME" \
-"SELECT account1.id, balance, homeaddress FROM account1, account2 WHERE account1.id = account2.id;" >> "$OUTPUT_FILE"
+"SELECT account1.id, balance, homeaddress FROM account1, account2 WHERE account1.id = account2.id;" | tee -a "$OUTPUT_FILE"
 
-echo "---Access Partial Fields---" >> "$OUTPUT_FILE"
-bash "$SCRIPT_DIR/../base_mariadb.sh" "$DATABASE_NAME" "SELECT id, balance FROM account1;" >> "$OUTPUT_FILE"
+echo "---Access Partial Fields---" | tee -a "$OUTPUT_FILE"
+bash "$SCRIPT_DIR/../base_mariadb.sh" "$DATABASE_NAME" "SELECT id, balance FROM account1;" | tee -a "$OUTPUT_FILE"
