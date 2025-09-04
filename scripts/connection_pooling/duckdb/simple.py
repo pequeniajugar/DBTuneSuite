@@ -1,4 +1,4 @@
-# === simple.py (DuckDB version) ===
+# === simple.py (DuckDB version with CSV logging) ===
 import time
 import threading
 import random
