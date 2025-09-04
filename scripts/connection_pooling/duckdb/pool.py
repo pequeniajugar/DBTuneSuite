@@ -1,4 +1,4 @@
-# === pool.py (DuckDB version) ===
+# === pool.py ===
 import time
 import threading
 import random
