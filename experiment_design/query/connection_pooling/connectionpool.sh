@@ -11,7 +11,7 @@ DB_NAME="$1"
 
 POOL_SIZES=(25 50 100)   # POOL_SIZE, and also MAX_CONN
 THREADS_SET=(10 100 500) # NUM_THREADS
-RUNS=11                  # 每个组合运行次数
+RUNS=11                  
 
 echo "=== Running SIMPLE and POOL benchmarks on DB: ${DB_NAME} ==="
 
