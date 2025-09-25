@@ -1,14 +1,14 @@
 #!/bin/bash
 # Run a single SQL query against MariaDB, 11 repetitions with timing (built-in `time`)
-# usage:  bash base_mariadb.sh database_name "query(ies with {v1} and/or {v2})" [optional_label]
-# example: bash base_mariadb.sh account_new_7 "SELECT * FROM account1 WHERE hundreds1 BETWEEN {v1} AND {v2};" label1
+# Usage:   bash base_mariadb.sh database_name "query with {v1} and/or {v2}" [optional_label] [optional_output_csv]
+# Example: bash base_mariadb.sh account_new_7 "SELECT * FROM account1 WHERE hundreds1 BETWEEN {v1} AND {v2};" label1 mariadb_output.csv
 
 set -euo pipefail
 TIMEFORMAT='%R %U %S'
 
 # --- Connection settings ---
-MYSQL_USER="tw3090"
-MYSQL_PASSWORD="64113491Ka"
+MYSQL_USER="username"        # change as needed
+MYSQL_PASSWORD="pwd"
 MYSQL_HOST="localhost"
 MYSQL_PORT=15559
 # ----------------------------
@@ -16,6 +16,7 @@ MYSQL_PORT=15559
 MYSQL_DB="$1"         # MariaDB database name
 QUERY="$2"            # SQL query template (may include {v1}, {v2})
 LABEL="${3-}"         # Optional label for CSV output
+OUT_CSV="${4-}"       # Optional CSV output file name
 
 # Function: prepend 0 if the number starts with a dot (e.g., .123456 -> 0.123456)
 pad0() {
@@ -30,7 +31,11 @@ pad0() {
 # Prepare output directory and CSV file
 RESULTS_DIR="./results"
 mkdir -p "$RESULTS_DIR"
-RESULTS_FILE="$RESULTS_DIR/mariadb_results.csv"
+if [[ -n "$OUT_CSV" ]]; then
+  RESULTS_FILE="$RESULTS_DIR/$OUT_CSV"
+else
+  RESULTS_FILE="$RESULTS_DIR/mariadb_results.csv"
+fi
 
 # Write CSV header if not exists
 if [[ ! -f "$RESULTS_FILE" ]]; then
@@ -47,7 +52,7 @@ fi
 echo "Execution Time      Response Time"
 
 # --- Initial value for v1 ---
-value1=800
+value1=150
 
 for i in $(seq 1 11); do
   value2=$((value1 + 1000))
@@ -88,7 +93,7 @@ for i in $(seq 1 11); do
   REAL_TIME=$(pad0 "$REAL_TIME")
   EXECUTION_TIME=$(pad0 "$EXECUTION_TIME")
 
-  echo "ran mariadb ${i} (v1=$value1, v2=$value2)"
+  echo "ran mariadb ${i}"
   echo "${EXECUTION_TIME}            ${REAL_TIME}"
 
   if [[ -n "$LABEL" ]]; then
@@ -104,3 +109,4 @@ for i in $(seq 1 11); do
 done
 
 echo "MARIADB QUERY DONE"
+echo "Results saved to: $RESULTS_FILE"

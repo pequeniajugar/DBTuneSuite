@@ -1,14 +1,16 @@
 #!/bin/bash
 # Run a single SQL query against DuckDB, 11 repetitions with timing
-# usage:  bash base_duckdb.sh database_path "query(ies)"
-# example: bash base_duckdb.sh /data/tw3090/duckdb/account_new_7 "select id, balance from account1;"
+# Usage:   bash base_duckdb.sh database_path "query with {v1} and/or {v2}" [optional_label] [optional_output_csv]
+# Example: bash base_duckdb.sh /data/tw3090/duckdb/account_new_7 \
+#   "SELECT * FROM account1 WHERE ssnum BETWEEN {v1} AND {v2};" label1 duckdb_output.csv
 
 set -euo pipefail
 TIMEFORMAT='%R %U %S'
 
 DUCKDB_DB="$1"         # DuckDB database file path
-QUERY="$2"             # SQL query or queries
-LABEL="${3-}"          # Optional: label for output (e.g., relative path of query file)
+QUERY="$2"             # SQL query template (may include {v1}, {v2})
+LABEL="${3-}"          # Optional label for CSV output
+OUT_CSV="${4-}"        # Optional CSV output file name
 
 # Function: prepend 0 if the number starts with a dot (e.g. .123456 -> 0.123456)
 pad0() {
@@ -23,7 +25,11 @@ pad0() {
 # Prepare output directory and CSV file
 RESULTS_DIR="./results"
 mkdir -p "$RESULTS_DIR"
-RESULTS_FILE="$RESULTS_DIR/duckdb_results.csv"
+if [[ -n "$OUT_CSV" ]]; then
+  RESULTS_FILE="$RESULTS_DIR/$OUT_CSV"
+else
+  RESULTS_FILE="$RESULTS_DIR/duckdb_results.csv"
+fi
 
 # Write CSV header if the file does not exist yet
 if [[ ! -f "$RESULTS_FILE" ]]; then
@@ -31,17 +37,26 @@ if [[ ! -f "$RESULTS_FILE" ]]; then
 fi
 
 echo "DUCKDB QUERY STARTED"
-echo "DUCKDB database: $DUCKDB_DB"
+echo "DuckDB database: $DUCKDB_DB"
 if [[ -n "$LABEL" ]]; then
-  echo "DUCKDB Query File: $LABEL"
+  echo "Query File: $LABEL"
 else
-  echo "DUCKDB Query: $QUERY"
+  echo "Query Template: $QUERY"
 fi
 echo "Execution Time      Response Time"
 
+# --- Initial value for v1 ---
+value1=150
+
 for i in $(seq 1 11); do
+  value2=$((value1 + 1000))
+
+  # Replace placeholders {v1} and {v2}
+  CURRENT_QUERY="${QUERY//\{v1\}/$value1}"
+  CURRENT_QUERY="${CURRENT_QUERY//\{v2\}/$value2}"
+
   # Use built-in `time` to capture real/user/sys time
-  { time duckdb "$DUCKDB_DB" -c "$QUERY" > /dev/null; } 2> duckdb_time_output.log
+  { time duckdb "$DUCKDB_DB" -c "$CURRENT_QUERY" > /dev/null; } 2> duckdb_time_output.log
 
   # If DuckDB failed, print error and exit
   if [ $? -ne 0 ]; then
@@ -76,14 +91,18 @@ for i in $(seq 1 11); do
   echo "ran duckdb ${i}"
   echo "${EXECUTION_TIME}            ${REAL_TIME}"
 
-  # Append result to CSV, dbms field is fixed to "duckdb"
+  # Append result to CSV
   if [[ -n "$LABEL" ]]; then
     echo "duckdb,${LABEL},${i},${EXECUTION_TIME},${REAL_TIME}" >> "$RESULTS_FILE"
   else
-    echo "duckdb,${QUERY},${i},${EXECUTION_TIME},${REAL_TIME}" >> "$RESULTS_FILE"
+    echo "duckdb,${CURRENT_QUERY},${i},${EXECUTION_TIME},${REAL_TIME}" >> "$RESULTS_FILE"
   fi
 
   rm -f duckdb_time_output.log
+
+  # Increment v1 for next run
+  value1=$((value1 + 1))
 done
 
 echo "DUCKDB QUERY DONE"
+echo "Results saved to: $RESULTS_FILE"
