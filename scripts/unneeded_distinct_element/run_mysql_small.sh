@@ -1,0 +1,10 @@
+#!/bin/bash
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+output_file="$SCRIPT_DIR/../results/mysql_small_unneeded_distinct.txt"
+database_name="student_techdept_small"      #change name
+
+echo "-----With Distinct-----" > "$output_file"
+bash ../base_mysql.sh "$database_name" "SELECT DISTINCT ssnum FROM employee, techdept WHERE employee.dept = techdept.dept;" >> "$output_file"
+
+echo "-----Without Distinct-----" > "$output_file"
+bash ../base_mysql.sh "$database_name" "SELECT ssnum FROM employee, techdept WHERE employee.dept = techdept.dept;" >> "$output_file"
