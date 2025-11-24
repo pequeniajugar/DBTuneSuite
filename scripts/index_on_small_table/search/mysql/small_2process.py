@@ -1,0 +1,146 @@
+import pymysql
+import multiprocessing
+import time
+import csv
+import random
+from pathlib import Path
+
+# MySQL connection details
+MYSQL_DB_PARAMS = {
+    "host": "localhost",
+    "port": 3306,          # change if your MySQL runs on a different port
+    "user": "root",        # change to your MySQL user
+    "password": "pwd",     # change to your MySQL password
+    "database": "employees_small",  # change DB name if needed
+    "charset": "utf8mb4",
+}
+
+random.seed(42)
+
+CSV_FILE = "/data/tw3090/employee/employeesindex_small.csv"  # Path to your CSV file
+
+# Results CSV (change path/name if needed)
+ROOT_DIR = Path(__file__).resolve().parents[5]  # repo root
+RESULTS_DIR = ROOT_DIR / "results"
+RESULTS_DIR.mkdir(parents=True, exist_ok=True)
+RESULTS_CSV = RESULTS_DIR / "mysql_index_small_search_2process.csv"
+
+
+def init_results_csv():
+    if not RESULTS_CSV.exists():
+        with RESULTS_CSV.open("w", newline="") as f:
+            writer = csv.writer(f)
+            writer.writerow(["dbms", "label", "iteration", "execution_time", "response_time"])
+
+
+def load_csv_data(csv_file, use_index, run_number):
+    updates = []
+    with open(csv_file, mode="r", newline="") as file:
+        reader = csv.reader(file)
+        next(reader)  # skip header
+        for row in reader:
+            # If using index, use hundreds1 (row[3]); otherwise longitude (row[4])
+            condition_value = row[3] if use_index else row[4]
+            modified_name = row[1] + str(run_number)
+            updates.append((modified_name, condition_value))
+    return updates
+
+
+def update_task(process_id, use_index, updates, result_queue):
+    try:
+        conn = pymysql.connect(
+            host=MYSQL_DB_PARAMS["host"],
+            port=MYSQL_DB_PARAMS["port"],
+            user=MYSQL_DB_PARAMS["user"],
+            password=MYSQL_DB_PARAMS["password"],
+            database=MYSQL_DB_PARAMS["database"],
+            charset=MYSQL_DB_PARAMS["charset"],
+            autocommit=False,
+        )
+        cursor = conn.cursor()
+    except pymysql.MySQLError as e:
+        print(f"Process {process_id} - connection failed: {e}")
+        return
+
+    updates_count = 0
+    sql_template = (
+        "SELECT COUNT(*) FROM employees WHERE hundreds1 = %s"
+        if use_index
+        else "SELECT COUNT(*) FROM employees WHERE longitude = %s"
+    )
+
+    start_cpu = time.process_time()
+
+    for new_name, value in updates:
+        try:
+            cursor.execute(sql_template, (value,))
+            conn.commit()
+            updates_count += 1
+        except pymysql.MySQLError as e:
+            print(f"Process {process_id} error: {e}")
+            conn.rollback()
+
+    end_cpu = time.process_time()
+    execution_time = end_cpu - start_cpu
+
+    result_queue.put(execution_time)
+
+    cursor.close()
+    conn.close()
+    print(f"Process {process_id} completed {updates_count} queries.")
+
+
+def run_experiment(use_index, run_number):
+    print(f"\n[Run {run_number}/10] Running experiment with {'INDEX' if use_index else 'NO INDEX'} (MySQL)...")
+
+    updates = load_csv_data(CSV_FILE, use_index=use_index, run_number=run_number)
+    sampled_updates = random.sample(updates, 200)
+    updates_split = [sampled_updates[:100], sampled_updates[100:]]
+
+    result_queue = multiprocessing.Queue()
+    processes = []
+
+    start_real_time = time.time()
+
+    for i in range(2):
+        p = multiprocessing.Process(
+            target=update_task,
+            args=(i + 1, use_index, updates_split[i], result_queue),
+        )
+        processes.append(p)
+        p.start()
+
+    for p in processes:
+        p.join()
+
+    end_real_time = time.time()
+    response_time = end_real_time - start_real_time
+    execution_time = sum(result_queue.get() for _ in range(2))
+
+    print("Experiment completed.")
+    print(f"  Response Time (Real):   {response_time:.4f} seconds")
+    print(f"  Execution Time (CPU):   {execution_time:.4f} seconds")
+
+    # Map use_index to label: scan / nonclustered
+    label = "nonclustered" if use_index else "scan"
+
+    # Append timing to CSV
+    with RESULTS_CSV.open("a", newline="") as f:
+        writer = csv.writer(f)
+        writer.writerow([
+            "mysql",          # dbms label
+            label,
+            run_number,
+            f"{execution_time:.6f}",
+            f"{response_time:.6f}",
+        ])
+
+
+if __name__ == "__main__":
+    init_results_csv()
+    # First: no index (scan), then: with index (nonclustered)
+    for i in range(1, 11):
+        run_experiment(use_index=False, run_number=i)
+
+    for i in range(1, 11):
+        run_experiment(use_index=True, run_number=i)
