@@ -571,7 +571,7 @@ Before running, adjust the **database name**, **connection settings**, and the *
 
 ### For mysql and postgres
 
-Please use cli to initialize the below method in the respective dbms.
+Please use command-line interface to initialize the below method in the respective dbms.
 
 ```bash
 DELIMITER //
@@ -634,6 +634,45 @@ bash run_mariadb.sh
 ```
 
 Before running, please adjust the **database name**, **connection settings**, and the **output_csv** path inside `run_mariadb.sh` to match your local environment.
+
+### For mysql and postgres
+
+Please use command-line interface to initialize the below method in the respective dbms.
+
+```bash
+DELIMITER //
+CREATE PROCEDURE fetch_employee()
+ BEGIN
+ DECLARE done INT DEFAULT FALSE;
+ DECLARE emp_ssnum INT;
+ DECLARE emp_name VARCHAR(255);
+ DECLARE emp_lat DECIMAL(10,2);
+ DECLARE emp_longitude DECIMAL(10,2);
+ DECLARE emp_hundreds1 INT;
+ DECLARE emp_hundreds2 INT;
+ -- DECLARE cursor
+ DECLARE emp_cursor CURSOR FOR
+ SELECT ssnum, name, lat, longitude, hundreds1, hundreds2 FROM employee;
+ -- finish dealing with cursor
+ DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = TRUE;
+ -- open cursor
+ OPEN emp_cursor;
+ -- read cursor
+ read_loop: LOOP
+ FETCH emp_cursor INTO emp_ssnum, emp_name, emp_lat, emp_longitude,
+ emp_hundreds1, emp_hundreds2;
+ IF done THEN
+ LEAVE read_loop;
+ END IF;
+ -- print line by line
+ SELECT emp_ssnum AS SSN, emp_name AS Name, emp_lat AS Latitude,
+ emp_longitude AS Longitude, emp_hundreds1, emp_hundreds2;
+ END LOOP;
+ -- close cursor
+ CLOSE emp_cursor;
+END//
+DELIMITER ;
+```
 
 ## retrieve needed columns
 
