@@ -569,6 +569,26 @@ bash run_mariadb.sh
 
 Before running, adjust the **database name**, **connection settings**, and the **output_csv** path inside `run_mariadb.sh` and `base_mariadb.sh` to match your environment.
 
+### For mysql and postgres
+
+Please use cli to initialize the below method in the respective dbms.
+
+```bash
+DELIMITER //
+CREATE PROCEDURE get_lineitems()
+ BEGIN
+ DECLARE i INT DEFAULT 1;
+ PREPARE stmt FROM ’SELECT␣*␣FROM␣lineitem␣WHERE␣l_partkey␣=␣?’;
+ WHILE i < 200 DO
+ SET @param = i;
+ EXECUTE stmt USING @param;
+ SET i = i + 1;
+ END WHILE;
+DEALLOCATE PREPARE stmt;
+END //
+DELIMITER ;
+```
+
 ## loop with cursor
 
 This experiment measures the overhead of fetching all rows from a table using a **regular SELECT** versus iterating row-by-row using a **cursor inside a stored procedure**.
