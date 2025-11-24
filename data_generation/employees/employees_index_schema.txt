@@ -25,6 +25,17 @@ CREATE TABLE employees (
     hundreds1 INT,
     hundreds2 INT);
 
+-- Index definitions (logical design; adapt syntax per DBMS):
+-- Nonclustered index on hundreds1 (covering some queries)
+-- Nonclustered index on hundreds2
+-- Additional covering indexes on (ssnum, name, hundreds2) and (lat, ssnum, name)
+
+-- Example (generic SQL-style notation):
+-- NONCLUSTERED INDEX c  ON employees(hundreds1);
+-- NONCLUSTERED INDEX nc ON employees(hundreds2);
+-- INDEX nc3 ON employees(ssnum, name, hundreds2);
+-- INDEX nc4 ON employees(lat, ssnum, name);
+
 
 
 
